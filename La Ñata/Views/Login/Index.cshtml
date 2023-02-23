@@ -1,0 +1,84 @@
+﻿@{
+    Layout = null;
+}
+@model La_Ñata.Models.User
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link href="~/Content/login.css" rel="stylesheet" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="icon" type="image/jpg" href="~/Content/Images/favicon.png" />
+    <title>Inicio de sesión</title>
+</head>
+<body>
+    <section class="gradient-custom" style="min-height: 100vh">
+        <div class="container py-5 h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+                <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+                    <div class="card bg-dark text-white" style="border-radius: 1rem;">
+                        <div class="card-body px-5 pb-5 text-center">
+                            @{
+                                using (Html.BeginForm("Validate", "Login", FormMethod.Post, new { @id = "formLogin", @class = "formLogin mt-md-4 pb-3" }))
+                                {
+                                    <h1 class="fw-bold my-3 text-uppercase">Iniciar sesión</h1>
+
+                                    <h4 class="text-white-50 mb-3">Por favor, ingrese su usuario y contraseña</h4>
+
+                                    <div id="containerUser" class="form-outline form-white mb-5 text-start">
+                                        <label class="form-label">Email</label>
+                                        <div class="formInput">
+                                            @Html.TextBoxFor(model => model.email, new { @id = "txtUser", @type = "email", @class = "form-control limpiarCampo habilitarCampo deshabilitarCampo" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.email, null, new { @class = "text-danger mb-4 mt-3", @id = "lblUser" })
+                                    </div>
+
+                                    <div id="containerPass" class="form-outline form-white mb-5 text-start">
+                                        <label class="form-label" for="typePasswordX">Contraseña</label>
+                                        <div class="formInput">
+                                            @Html.TextBoxFor(model => model.password, new { @id = "txtPass", @type = "password", @class = "form-control limpiarCampo habilitarCampo deshabilitarCampo" })
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.password, null, new { @class = "text-danger mb-4 mt-3", @id = "lblPass" })
+                                    </div>
+
+                                    <input id="btnIngresar" type="submit" class="btn btn-outline-light btn-lg px-5 mt-2" value="Ingresar" />
+                                    <a class="btn btn-outline-light btn-lg px-5 mt-2" href="/Home">Volver</a>
+
+                                    <div class="p-2 mt-4 errorMessage" id="errorMessage">
+                                        <p class="my-auto text-center"><i class="bi bi-exclamation-triangle-fill"></i><b> Error: </b>Por favor, completa los datos requeridos</p>
+                                    </div>
+                                    if (ViewBag.Message != null)
+                                    {
+                                        if (ViewBag.Error == 1)
+                                        {
+                                            @:<div id="NotifContainer" style="background-color: khaki;">
+                                                @:<h3 id="txtNotification" style="color: black;"><i class="bi bi-exclamation-triangle"></i>&nbsp;@ViewBag.Message</h3>
+                                            @:</div>
+                                        }
+                                        else if (ViewBag.Error == 2)
+                                        {
+                                            @:<div id="NotifContainer" style="background-color: crimson;">
+                                                @:<h3 id="txtNotification" style="color: white;"><i class="bi bi-exclamation-diamond"></i>&nbsp;@ViewBag.Message</h3>
+                                            @:</div>
+                                        }
+                                    }
+
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="~/Scripts/jquery-3.6.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script src="~/Scripts/login.js"></script>
+</body>
+</html>

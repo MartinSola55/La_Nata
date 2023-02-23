@@ -1,0 +1,45 @@
+﻿#notificationContainer {
+    border-style: solid;
+}
+
+#btnCloseNotification {
+    appearance: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    float: right;
+    text-align: center;
+}
+
+#closeSVG .error1 {
+    fill: rgb(0,75,180);
+}
+
+.error1 {
+    fill: rgba(170,150,0);
+}
+
+.error2 {
+    fill: rgb(100,0,20);
+}
+
+.onlyMessage {
+    background-color: rgb(56, 139, 253, 0.2);
+    border-color: rgba(56,139,253,0.4);
+}
+
+.containerError1 {
+    background-color: rgba(240, 230, 140, 0.7);
+    border-color: rgba(170,150,0,0.4);
+}
+
+.containerError2 {
+    background-color: rgba(255, 0, 0, 0.5);
+    border-color: rgb(150,0,20);
+}
+
+.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 2s, opacity 2s linear;
+}

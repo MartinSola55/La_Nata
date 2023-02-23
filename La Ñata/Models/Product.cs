@@ -17,13 +17,20 @@ namespace La_Ñata.Models
 
         public int id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Debes completar con una descripción")]
+        [StringLength(255, ErrorMessage = "Ingresa una descripción más corta")]
         public string description { get; set; }
 
+        [Required(ErrorMessage = "Debes ingresar un stock")]
+        [Range(0, 10000, ErrorMessage = "Debes ingresar un stock entre 0 y 10.000")]
         public long stock { get; set; }
 
+        [Required(ErrorMessage = "Debes ingresar un precio")]
+        [Range(0, 10000000, ErrorMessage = "Debes ingresar un precio mayor a $0")]
         public double price { get; set; }
 
+        [Required(ErrorMessage = "Debes ingresar un precio por rotura")]
+        [Range(0, 10000000, ErrorMessage = "Debes ingresar un precio por rotura mayor a $0")]
         public double break_price { get; set; }
 
         public DateTime created_at { get; set; }

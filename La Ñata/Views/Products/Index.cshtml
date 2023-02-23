@@ -1,0 +1,86 @@
+﻿@model IEnumerable<La_Ñata.Models.Product>
+
+@{
+    ViewBag.Title = "Productos";
+    La_Ñata.Models.User user = Session["User"] as La_Ñata.Models.User;
+}
+
+<link href="~/Content/number_input.css" rel="stylesheet" />
+<link href="~/Content/notification.css" rel="stylesheet" />
+<link href="~/Content/products.css" rel="stylesheet" />
+<link href="~/Content/table.css" rel="stylesheet" />
+
+<h1 class="text-center">Ventas</h1>
+<hr class="mb-3" />
+
+
+@{ if (ViewBag.Message != null)
+    {
+        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtNotification">@ViewBag.Message</div>
+                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
+                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
+}
+
+<div class="mb-5 d-flex flex-row">
+    <div class="col-9 mx-auto">
+        <div class="sombra p-4 mb-5" style="border-radius: 20px">
+            <div id="searchContainer" class="d-flex justify-content-between">
+                <div class="d-flex flex-row">
+                    <input class="form-control py-2" id="txtSearch" placeholder="Nombre" />
+                    <button id="btnSearch" type="button" class="btn" style="background-color: #e06c6c">
+                        <i class="bi bi-search" style="color: white"></i>
+                    </button>
+                </div>
+                <a id="btnAdd" class="btn text-white my-auto" href="../../Products/Create" style="background-color: #e06c6c">Agregar</a>
+            </div>
+        </div>
+
+        @* Tabla *@
+        <div class="table100 ver1 m-b-110">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center column20">Producto</th>
+                            <th class="text-center column10">Stock</th>
+                            <th class="text-center column10">Precio</th>
+                            <th class="text-center column10">Precio por rotura</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable">
+                        @foreach (La_Ñata.Models.Product item in Model)
+                        {
+                            <tr class='row100 body clickable-row' data-href='/Products/Edit/@item.id'>
+                                <td class='column20 ps-3'>@item.description</td>
+                                <td class='column10 text-center'>@item.stock</td>
+                                <td class='column10 text-center'>$@item.price</td>
+                                <td class='column10 text-center'>$@item.break_price</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/products.js"></script>
+<script src="~/Scripts/notification.js"></script>
+
+<script>
+    $(".clickable-row").click(function () {
+        window.location = $(this).data("href");
+    });
+</script>

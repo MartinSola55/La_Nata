@@ -1,0 +1,8 @@
+﻿@media(max-width: 767px) {
+    #searchContainer {
+        flex-direction: column;
+    }
+    #btnAdd {
+        margin-top: 30px !important;
+    } 
+}
