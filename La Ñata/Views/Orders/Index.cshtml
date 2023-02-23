@@ -1,75 +1,93 @@
 ﻿@model IEnumerable<La_Ñata.Models.Order>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Pedidos";
 }
 
-<h2>Index</h2>
+<link href="~/Content/number_input.css" rel="stylesheet" />
+<link href="~/Content/notification.css" rel="stylesheet" />
+<link href="~/Content/orders.css" rel="stylesheet" />
+<link href="~/Content/table.css" rel="stylesheet" />
+<link href="~/Content/daterangepicker.css" rel="stylesheet" />
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.client_name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.phone)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.event_adress)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.shipment_price)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.observation)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.created_at)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.deleted_at)
-        </th>
-        <th></th>
-    </tr>
+<h1 class="text-center">Pedidos</h1>
+<hr class="mb-3" />
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.client_name)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.phone)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.event_adress)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.shipment_price)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.observation)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.created_at)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.deleted_at)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
-        </td>
-    </tr>
+
+@{ if (ViewBag.Message != null)
+    {
+        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtNotification">@ViewBag.Message</div>
+                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
+                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
 }
 
-</table>
+<div class="mb-5 d-flex flex-row">
+    <div class="col-9 mx-auto">
+        <div class="sombra p-4 mb-5" style="border-radius: 20px">
+            <div id="searchContainer" class="d-flex justify-content-between">
+                <div class="d-flex flex-row">
+                    <input type="text" class="form-control py-2" id="datepicker" readonly placeholder="dd/mm/aaaa" />
+                </div>
+                <a id="btnAdd" class="btn text-white my-auto" href="../../Orders/Create" style="background-color: #e06c6c"><i class="bi bi-plus-circle"></i></a>
+            </div>
+        </div>
+
+        @* Tabla *@
+        <div class="table100 ver1 m-b-110">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center column10">Cliente</th>
+                            <th class="text-center column10">Teléfono</th>
+                            <th class="text-center column10">Dirección</th>
+                            <th class="text-center column10">Flete</th>
+                            <th class="text-center column20">Observación</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable">
+                        @foreach (La_Ñata.Models.Order item in Model)
+                        {
+                            <tr class='row100 body clickable-row' data-href='/Orders/Details/@item.id'>
+                                <td class='column10 ps-3'>@item.client_name</td>
+                                <td class='column10 text-center'>@item.phone</td>
+                                <td class='column10 text-center'>@item.event_adress</td>
+                                <td class='column10 text-center'>@(item.shipment_price != null ? "$" + item.shipment_price : "-")</td>
+                                @if (item.observation == null || item.observation == string.Empty)
+                                {
+                                    <td class='column20 text-center'>-</td>
+                                } else
+                                {
+                                    <td class='column20'>@item.observation</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/moment-with-locales.js"></script>
+<script src="~/Scripts/daterangepicker.js"></script>
+<script src="~/Scripts/orders.js"></script>
+<script src="~/Scripts/notification.js"></script>
+
+<script>
+    $(".clickable-row").click(function () {
+        window.location = $(this).data("href");
+    });
+</script>

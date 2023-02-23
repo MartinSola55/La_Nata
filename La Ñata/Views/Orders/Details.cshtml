@@ -1,82 +1,112 @@
 ﻿@model La_Ñata.Models.Order
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Pedido";
 }
 
-<h2>Details</h2>
+<link href="~/Content/notification.css" rel="stylesheet" />
+<link href="~/Content/table.css" rel="stylesheet" />
 
-<div>
-    <h4>Order</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.client_name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.client_name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.phone)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.phone)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.event_adress)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.event_adress)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.date)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.date)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.shipment_price)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.shipment_price)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.observation)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.observation)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.created_at)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.created_at)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.deleted_at)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.deleted_at)
-        </dd>
-
-    </dl>
+<div class="d-flex align-items-end">
+    <a class="btn btn-dark" href="../../Orders"><i class="bi bi-arrow-left"></i></a>
+    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+        <h1 class="text-center">Detalles del pedido</h1>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>
+<hr class="pb-3" />
+
+<div class="mb-5 d-flex flex-row">
+    <div class="col-9 mx-auto">
+        <div class="sombra p-4 mb-5" style="border-radius: 20px">
+            <div id="searchContainer" class="d-flex justify-content-between">
+                <div class="d-flex flex-row">
+                    <div>
+                        <label class="form-label">Cliente</label>
+                        @Html.TextBox("client_name", Model.client_name, new { @class = "form-control py-2", @readonly = "readonly" })
+                    </div>
+
+                    <div>
+                        <label class="form-label">Teléfono</label>
+                        @if (Model.phone == null || Model.phone == string.Empty)
+                        {
+                            @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                        } else
+                        {
+                            @Html.TextBox("phone", Model.phone, new { @class = "form-control py-2", @readonly = "readonly" })
+                        }
+                    </div>
+
+                    <div>
+                        <label class="form-label">Dirección</label>
+                        @Html.TextBox("event_adress", Model.event_adress, new { @class = "form-control py-2", @readonly = "readonly" })
+                    </div>
+
+                    <div>
+                        <label class="form-label">Fecha</label>
+                        @Html.TextBox("date", Model.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2", @readonly = "readonly" })
+                    </div>
+
+                    <div>
+                        <label class="form-label">Flete</label>
+                        @if (Model.shipment_price == null)
+                        {
+                            @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("shipment_price", Model.shipment_price, new { @class = "form-control py-2", @readonly = "readonly" })
+                        }
+                    </div>
+
+                    <div>
+                        <label class="form-label">Observaciones</label>
+                        @if (Model.observation == null || Model.observation == string.Empty)
+                        {
+                            @Html.TextBox("observation", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("observation", Model.observation, new { @class = "form-control py-2", @readonly = "readonly" })
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Tabla *@
+        <div class="table100 ver1 m-b-110">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center column20">Producto</th>
+                            <th class="text-center column10">Cantidad</th>
+                            <th class="text-center column10">Precio</th>
+                            <th class="text-center column10">Precio por rotura</th>
+                            <th class="text-center column10">Precio actual</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable">
+                        @foreach (La_Ñata.Models.ProductOrder item in Model.ProductOrder)
+                        {
+                            <tr class='row100 body'>
+                                <td class='column20 ps-3'>@item.Product.description</td>
+                                <td class='column10 text-center'>@item.quantity</td>
+                                <td class='column10 text-center'>$@item.unit_price</td>
+                                <td class='column10 text-center'>$@item.Product.break_price</td>
+                                <td class='column10 text-center'>$@item.Product.price</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Scripts/notification.js"></script>

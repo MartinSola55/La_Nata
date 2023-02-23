@@ -183,7 +183,7 @@ namespace La_Ñata.Controllers
             base.Dispose(disposing);
         }
 
-        // GET: Filter products by name or internal code
+        // GET: Filter products by name
         [HttpGet]
         public JsonResult FilterProductsByName(string name)
         {
@@ -202,6 +202,37 @@ namespace La_Ñata.Controllers
                             p.break_price,
                         }).ToList();
 
+                return Json(products, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        // GET: Filter products by name and date
+        [HttpGet]
+        public JsonResult ProductsStock(string name, string date)
+        {
+            try
+            {
+                string date_formatted = Convert.ToDateTime(date).ToString("yyyy-MM-dd");
+                var products = db.Product
+                        .Include(p => p.ProductOrder)
+                        .Where(p =>
+                        p.description.Contains(name) &&
+                        p.deleted_at.Equals(null))
+                        .Select(p => new
+                        {
+                            product_id = p.id,
+                            p.description,
+                            p.price,
+                            p.break_price,
+                            stock = p.stock - (p.ProductOrder
+                            .Where(po => DbFunctions.TruncateTime(po.Order.date).ToString().Contains(date_formatted) && po.id_product.Equals(p.id))
+                            .Sum(po => po.quantity) ?? 0),
+                        }).ToList();
+                
                 return Json(products, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)

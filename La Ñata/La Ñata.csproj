@@ -113,12 +113,14 @@
     <Content Include="Content\bootstrap.rtl.css" />
     <Content Include="Content\bootstrap.rtl.min.css" />
     <Content Include="Content\cards.css" />
+    <Content Include="Content\daterangepicker.css" />
     <Content Include="Content\Images\favicon.png" />
     <Content Include="Content\Images\logo.png" />
     <Content Include="Content\login.css" />
     <Content Include="Content\navbar.css" />
     <Content Include="Content\notification.css" />
     <Content Include="Content\number_input.css" />
+    <Content Include="Content\orders.css" />
     <Content Include="Content\products.css" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\table.css" />
@@ -130,6 +132,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.6.3.intellisense.js" />
+    <Content Include="Scripts\daterangepicker.js" />
     <Content Include="Scripts\jquery-3.6.3.js" />
     <Content Include="Scripts\jquery-3.6.3.min.js" />
     <Content Include="Scripts\jquery-3.6.3.slim.js" />
@@ -141,8 +144,12 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\login.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Scripts\moment-with-locales.js" />
     <Content Include="Scripts\navbar.js" />
     <Content Include="Scripts\notification.js" />
+    <Content Include="Scripts\orders.js" />
+    <Content Include="Scripts\orders_create.js" />
+    <Content Include="Scripts\productOrder.js" />
     <Content Include="Scripts\products.js" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -210,6 +217,7 @@
     <Content Include="Views\Orders\Edit.cshtml" />
     <Content Include="Views\Orders\Index.cshtml" />
     <Content Include="Views\Products\Edit.cshtml" />
+    <Content Include="Views\Orders\AddProducts.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

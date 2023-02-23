@@ -1,0 +1,215 @@
+﻿@model La_Ñata.Models.ProductOrder
+
+@{
+    ViewBag.Title = "Pedido";
+    List<La_Ñata.Models.ProductOrder> products = Session["Products"] as List<La_Ñata.Models.ProductOrder>;
+}
+
+<link href="~/Content/notification.css" rel="stylesheet" />
+<link href="~/Content/table.css" rel="stylesheet" />
+<link href="~/Content/number_input.css" rel="stylesheet" />
+
+<div class="d-flex align-items-end">
+    <a class="btn btn-dark" href="../../Orders/Create"><i class="bi bi-arrow-left"></i></a>
+    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+        <h1 class="text-center">Crear pedido</h1>
+    </div>
+</div>
+<hr class="pb-3" />
+
+@{ if (ViewBag.Message != null)
+    {
+        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtNotification">@ViewBag.Message</div>
+                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
+                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
+}
+
+
+@Html.Hidden("id_product")
+@Html.Hidden("stock")
+<!-- Modal -->
+<div class="modal modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Agregar al pedido</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body d-flex flex-column">
+                <div class="d-flex flex-column">
+                    <label class="pb-3 text-center" id="currentStock"></label>
+                    <div class="d-flex flex-row justify-content-center align-items-center">
+                        <div class='d-flex flex-row justify-content-center'>
+                            <div class='value-button' id='decrease_stock' onclick='decreaseValue()' value='Decrease Value'>-</div>
+                            @Html.TextBoxFor(model => model.quantity, null, new { @type = "number", @id = "quantity", @class = "number" })
+                            <div class='value-button' id='increase_stock' onclick='increaseValue()' value='Increase Value'>+</div>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.quantity, null, new { @class = "text-center text-danger mb-4" })
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnSendForm" type="submit" class="btn btn-primary">Agregar</button>
+                <button id="modalCerrar" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mx-xl-4 mb-5 d-flex flex-xl-row flex-column">
+    <div class="col-xl-9 col-10 me-xl-3 mb-4 mx-auto">
+        <div class="sombra p-4 mb-5" style="border-radius: 20px">
+            <div id="searchContainer" class="d-flex flex-lg-column flex-row justify-content-between">
+                <div class="d-flex flex-lg-row flex-column">
+                    <div class="col-xl-3">
+                        <label class="mt-2">Cliente</label>
+                        @Html.TextBox("client_name", Model.Order.client_name, new { @class = "form-control py-2", @readonly = "readonly" })
+                    </div>
+
+                    <div class="col-xl-3">
+                        <label class="mt-2">Teléfono</label>
+                        @if (Model.Order.phone == null || Model.Order.phone == string.Empty)
+                        {
+                            @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("phone", Model.Order.phone, new { @class = "form-control py-2", @readonly = "readonly" })
+                        }
+                    </div>
+
+                    <div class="col-xl-3">
+                        <label class="mt-2">Dirección</label>
+                        @Html.TextBox("event_adress", Model.Order.event_adress, new { @class = "form-control py-2", @readonly = "readonly" })
+                    </div>
+
+                    <div class="col-xl-3">
+                        <label class="mt-2">Fecha</label>
+                        @Html.TextBox("date", Model.Order.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2", @readonly = "readonly", @id = "datepicker" })
+                    </div>
+                </div>
+
+                <div class="d-flex flex-lg-row flex-column">
+                    <div class="col-xl-3">
+                        <label class="mt-2">Flete</label>
+                        @if (Model.Order.shipment_price == null)
+                        {
+                            @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("shipment_price", Model.Order.shipment_price, new { @class = "form-control py-2", @readonly = "readonly" })
+                        }
+                    </div>
+
+                    <div class="col-xl-3">
+                        <label class="mt-2">Observaciones</label>
+                        @if (Model.Order.observation == null || Model.Order.observation == string.Empty)
+                        {
+                            @Html.TextBox("observation", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                        }
+                        else
+                        {
+                            @Html.TextBox("observation", Model.Order.observation, new { @class = "form-control py-2", @readonly = "readonly" })
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sombra p-4 mb-5" style="border-radius: 20px; max-width: fit-content">
+            <div class="sombra d-flex flex-row" style="max-width: fit-content">
+                <div class="d-flex flex-row">
+                    <input class="form-control py-2" id="txtSearch" placeholder="Nombre" />
+                    <button id="btnSearch" type="button" class="btn" style="background-color: #e06c6c">
+                        <i class="bi bi-search" style="color: white"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @* Tabla *@
+        <div class="table100 ver1">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center py-1 py-lg-3 column20">Producto</th>
+                            <th class="text-center py-1 py-lg-3 column10">Stock</th>
+                            <th class="text-center py-1 py-lg-3 column10">Precio</th>
+                            <th class="text-center py-1 py-lg-3 column10">Precio por rotura</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @* Tabla carrito *@
+    <div class="col-xl-3 col-10 mx-auto">
+        <div class="table100 ver1">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head d-flex">
+                            <th class="cell100 py-3 text-center" style="background-color: lightgreen; width: 40%; text-shadow: 0px 0px 30px #000; background-image: none">Producto</th>
+                            <th class="cell100 py-3 text-center" style="background-color: lightgreen; width: 30%; text-shadow: 0px 0px 30px #000; background-image: none">Cantidad</th>
+                            <th class="cell100 py-3 text-center" style="background-color: lightgreen; width: 30%; text-shadow: 0px 0px 30px #000; background-image: none">Eliminar</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable">
+                        @if (products != null)
+                        {
+                            foreach (La_Ñata.Models.ProductOrder item in products.OrderByDescending(p => p.quantity))
+                            {
+                                <tr class="row100 body d-flex">
+                                    <td class="cell100 ms-3 ms-xl-1" style="width: 40%">@Html.DisplayFor(modelItem => item.Product.description)</td>
+                                    <td class="cell100 text-center" style="width: 30%">@Html.DisplayFor(modelItem => item.quantity)</td>
+                                    <td class="cell100 text-center" style="width: 30%">
+                                        @using (Html.BeginForm("RemoveProductSell", "Orders", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.Hidden("id_prod", item.Product.id)
+                                            <button class="btn" style="background-color: #ff5969; color: white; padding: 0 0.3rem" type="submit"><i class='bi bi-x-lg'></i></button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            <tr>
+                                @using (Html.BeginForm("ConfirmSale", "Orders", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <td class="cell100 d-flex justify-content-end pe-3">
+                                        <button class="btn" style="background-color: lightgreen; color: white; text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/notification.js"></script>
+<script src="~/Scripts/productOrder.js"></script>

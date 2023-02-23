@@ -83,7 +83,8 @@
 }
 
 table {
-    width: 100%
+    width: 100%;
+    height: 100%;
 }
 
 th,td {
@@ -102,19 +103,6 @@ th,td {
     width: 5%
 }
 
-@media(min-width: 991px) {
-    .table100-head th {
-        padding-top: 18px;
-        padding-bottom: 18px
-    }
-}
-
-@media(max-width: 523px) {
-    .table100-body {
-        margin-top: 20px
-    }
-}
-
 .table100-body td {
     padding-top: 16px;
     padding-bottom: 16px
@@ -122,14 +110,6 @@ th,td {
 
 .table100 {
     position: relative;
-    padding-top: 60px;
-}
-
-.table100-head {
-    position: absolute;
-    width: 100%;
-    top: 0;
-    left: 0
 }
 
 .table100-body {
