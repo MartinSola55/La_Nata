@@ -30,7 +30,7 @@
 }
 
 <div class="mb-5 d-flex flex-row">
-    <div class="col-9 mx-auto">
+    <div class="col-xl-9 col-11 mx-auto">
         <div class="sombra p-4 mb-5" style="border-radius: 20px">
             <div id="searchContainer" class="d-flex justify-content-between">
                 <div class="d-flex flex-row">
@@ -46,11 +46,9 @@
                 <table>
                     <thead>
                         <tr class="row100 head">
-                            <th class="text-center column10">Cliente</th>
-                            <th class="text-center column10">Teléfono</th>
-                            <th class="text-center column10">Dirección</th>
-                            <th class="text-center column10">Flete</th>
-                            <th class="text-center column20">Observación</th>
+                            <th class="text-center py-3 column10">Cliente</th>
+                            <th class="text-center py-3 column10">Teléfono</th>
+                            <th class="text-center py-3 column10">Dirección</th>
                         </tr>
                     </thead>
                 </table>
@@ -62,16 +60,8 @@
                         {
                             <tr class='row100 body clickable-row' data-href='/Orders/Details/@item.id'>
                                 <td class='column10 ps-3'>@item.client_name</td>
-                                <td class='column10 text-center'>@item.phone</td>
+                                <td class='column10 text-center'>@(item.phone != null ? item.phone : "-")</td>
                                 <td class='column10 text-center'>@item.event_adress</td>
-                                <td class='column10 text-center'>@(item.shipment_price != null ? "$" + item.shipment_price : "-")</td>
-                                @if (item.observation == null || item.observation == string.Empty)
-                                {
-                                    <td class='column20 text-center'>-</td>
-                                } else
-                                {
-                                    <td class='column20'>@item.observation</td>
-                                }
                             </tr>
                         }
                     </tbody>

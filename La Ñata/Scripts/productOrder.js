@@ -58,10 +58,18 @@ $("#btnSendForm").on("click", function (e) {
     let stock = parseInt($("#stock").val());
     let id_product = $("#id_product").val();
     if (quant <= stock) {
-        $.get("../../Orders/AddToOrder/?id_prod=" + id_product + "&quant=" + quant, function (data) {
+        $.get("../../Orders/AddToOrder/?id_prod=" + id_product + "&quant=" + quant + "&real_stock=" + stock, function () {
             location.reload();
         })
     } else {
         alert("Ingrese una cantidad menor o igual al stock existente")
     }
+});
+
+$("#formCreateOrder").on("submit", function (e) {
+    e.preventDefault();
+    let obs = $("#observation").val();
+    console.log(obs)
+    $("#Order_observation").val(obs);
+    //$("#formCreateOrder").submit();
 });

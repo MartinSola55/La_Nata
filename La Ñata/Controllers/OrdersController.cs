@@ -7,7 +7,9 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using La_Ñata.Models;
+using System.Transactions;
 
 namespace La_Ñata.Controllers
 {
@@ -79,23 +81,6 @@ namespace La_Ñata.Controllers
         public ActionResult Create()
         {
             return View(new Order());
-        }
-
-        // POST: Orders/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "id,client_name,phone,event_adress,date,shipment_price,observation,created_at,deleted_at")] Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Order.Add(order);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-
-            return View(order);
         }
 
         // GET: Orders/Edit/5
@@ -203,9 +188,9 @@ namespace La_Ñata.Controllers
         }
 
 
-        // GET: Add products to cart
+        // GET: Add products to order
         [HttpGet]
-        public void AddToOrder(int? id_prod, int? quant)
+        public void AddToOrder(int? id_prod, int? quant, int real_stock)
         {
             try
             {
@@ -222,6 +207,7 @@ namespace La_Ñata.Controllers
                         prod.Product = db.Product
                             .Where(p => p.id.Equals(id_prod.Value))
                             .First();
+
                         if (products.Count == 0)
                         {
                             prod.quantity = quant.Value;
@@ -230,14 +216,21 @@ namespace La_Ñata.Controllers
                         }
                         else
                         {
+                            // Check for duplicate product
                             int count = products.Count;
                             for (int index = 0; index < count; index++)
                             {
+                                // Add quantity to same product
                                 if (products[index].Product.id == prod.Product.id)
                                 {
-                                    products[index].quantity += quant.Value;
-                                    break;
+                                    // Validate not to exceed stock
+                                    if (products[index].quantity + quant.Value <= real_stock)
+                                    {
+                                        products[index].quantity += quant.Value;
+                                        break;
+                                    }
                                 }
+                                // Add new product
                                 else if (index == products.Count - 1)
                                 {
                                     prod.quantity = quant.Value;
@@ -249,17 +242,17 @@ namespace La_Ñata.Controllers
                         Session["Products"] = products;
                     }
                 }
-                return;
             }
             catch (Exception)
             {
-                Session["Products"] = null;
-                return;
+                throw;
             }
+            return;
         }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult RemoveProductSell(int? id_prod)
+
+        // GET: Remove products from order
+        [HttpGet]
+        public void RemoveProduct(int? id_prod)
         {
             try
             {
@@ -282,7 +275,51 @@ namespace La_Ñata.Controllers
             {
                 throw;
             }
-            return RedirectToAction("AddProducts");
+            return;
+        }
+
+        // POST: Create order
+        [HttpPost, ActionName("Create")]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateOrder(Order order)
+        {
+            try
+            {
+                if (Session["Products"] != null)
+                {
+                    List<ProductOrder> products = Session["Products"] as List<ProductOrder>;
+
+                    order.created_at = DateTime.UtcNow.AddHours(-3);
+
+                    using (var transaccion = new TransactionScope())
+                    {
+                        db.Order.Add(order);
+                        db.SaveChanges();
+                        foreach (ProductOrder item in products)
+                        {
+                            ProductOrder prod_order = new ProductOrder
+                            {
+                                id_product = item.Product.id,
+                                id_order = order.id,
+                                quantity = item.quantity,
+                                unit_price = item.unit_price,
+                            };
+
+                            db.ProductOrder.Add(prod_order);
+                        }
+                        db.SaveChanges();
+                        transaccion.Complete();
+                    }
+                    Session["Products"] = null;
+                    TempData["Message"] = "La orden se ha creado exitosamente";
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error. La orden no pudo ser creada";
+                TempData["Error"] = "2";
+            }
+            return RedirectToAction("Index");
         }
     }
 }

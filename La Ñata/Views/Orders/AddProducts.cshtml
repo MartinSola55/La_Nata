@@ -17,20 +17,6 @@
 </div>
 <hr class="pb-3" />
 
-@{ if (ViewBag.Message != null)
-    {
-        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
-            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
-                <div id="txtNotification">@ViewBag.Message</div>
-                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
-                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
-                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    }
-}
 
 
 @Html.Hidden("id_product")
@@ -65,61 +51,54 @@
 </div>
 
 <div class="mx-xl-4 mb-5 d-flex flex-xl-row flex-column">
-    <div class="col-xl-9 col-10 me-xl-3 mb-4 mx-auto">
+    <div class="col-xl-9 col-11 me-xl-3 mb-4 mx-auto">
         <div class="sombra p-4 mb-5" style="border-radius: 20px">
             <div id="searchContainer" class="d-flex flex-lg-column flex-row justify-content-between">
-                <div class="d-flex flex-lg-row flex-column">
-                    <div class="col-xl-3">
+                <div class="d-flex flex-lg-row flex-column me-2 me-md-0">
+                    <div class="col-xl-3 pe-lg-3">
                         <label class="mt-2">Cliente</label>
-                        @Html.TextBox("client_name", Model.Order.client_name, new { @class = "form-control py-2", @readonly = "readonly" })
+                        @Html.TextBox("client_name", Model.Order.client_name, new { @class = "form-control py-2", @disabled = "disabled" })
                     </div>
 
-                    <div class="col-xl-3">
+                    <div class="col-xl-3 pe-lg-3">
                         <label class="mt-2">Teléfono</label>
                         @if (Model.Order.phone == null || Model.Order.phone == string.Empty)
                         {
-                            @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                            @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center", @disabled = "disabled" })
                         }
                         else
                         {
-                            @Html.TextBox("phone", Model.Order.phone, new { @class = "form-control py-2", @readonly = "readonly" })
+                            @Html.TextBox("phone", Model.Order.phone, new { @class = "form-control py-2", @disabled = "disabled" })
                         }
                     </div>
 
-                    <div class="col-xl-3">
+                    <div class="col-xl-3 pe-lg-3">
                         <label class="mt-2">Dirección</label>
-                        @Html.TextBox("event_adress", Model.Order.event_adress, new { @class = "form-control py-2", @readonly = "readonly" })
+                        @Html.TextBox("event_adress", Model.Order.event_adress, new { @class = "form-control py-2", @disabled = "disabled" })
                     </div>
 
                     <div class="col-xl-3">
                         <label class="mt-2">Fecha</label>
-                        @Html.TextBox("date", Model.Order.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2", @readonly = "readonly", @id = "datepicker" })
+                        @Html.TextBox("date", Model.Order.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2", @disabled = "disabled", @id = "datepicker" })
                     </div>
                 </div>
 
-                <div class="d-flex flex-lg-row flex-column">
+                <div class="d-flex flex-lg-row mt-lg-3 flex-column justify-content-lg-between">
                     <div class="col-xl-3">
                         <label class="mt-2">Flete</label>
                         @if (Model.Order.shipment_price == null)
                         {
-                            @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
+                            @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center", @disabled = "disabled" })
                         }
                         else
                         {
-                            @Html.TextBox("shipment_price", Model.Order.shipment_price, new { @class = "form-control py-2", @readonly = "readonly" })
+                            @Html.TextBox("shipment_price", Model.Order.shipment_price, new { @class = "form-control py-2", @disabled = "disabled" })
                         }
                     </div>
 
                     <div class="col-xl-3">
                         <label class="mt-2">Observaciones</label>
-                        @if (Model.Order.observation == null || Model.Order.observation == string.Empty)
-                        {
-                            @Html.TextBox("observation", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
-                        }
-                        else
-                        {
-                            @Html.TextBox("observation", Model.Order.observation, new { @class = "form-control py-2", @readonly = "readonly" })
-                        }
+                        @Html.TextArea("observation", Model.Order.observation, new { @class = "form-control py-2", @rows = "4", @cols = "40" })
                     </div>
                 </div>
             </div>
@@ -183,9 +162,8 @@
                                     <td class="cell100 ms-3 ms-xl-1" style="width: 40%">@Html.DisplayFor(modelItem => item.Product.description)</td>
                                     <td class="cell100 text-center" style="width: 30%">@Html.DisplayFor(modelItem => item.quantity)</td>
                                     <td class="cell100 text-center" style="width: 30%">
-                                        @using (Html.BeginForm("RemoveProductSell", "Orders", FormMethod.Post))
+                                        @using (Html.BeginForm("RemoveProduct", "Orders", FormMethod.Get))
                                         {
-                                            @Html.AntiForgeryToken()
                                             @Html.Hidden("id_prod", item.Product.id)
                                             <button class="btn" style="background-color: #ff5969; color: white; padding: 0 0.3rem" type="submit"><i class='bi bi-x-lg'></i></button>
                                         }
@@ -193,9 +171,15 @@
                                 </tr>
                             }
                             <tr>
-                                @using (Html.BeginForm("ConfirmSale", "Orders", FormMethod.Post))
+                                @using (Html.BeginForm("Create", "Orders", FormMethod.Post, new { @id = "formCreateOrder" }))
                                 {
                                     @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model => model.Order.client_name)
+                                    @Html.HiddenFor(model => model.Order.phone)
+                                    @Html.HiddenFor(model => model.Order.event_adress)
+                                    @Html.HiddenFor(model => model.Order.date)
+                                    @Html.HiddenFor(model => model.Order.shipment_price)
+                                    @Html.HiddenFor(model => model.Order.observation)
                                     <td class="cell100 d-flex justify-content-end pe-3">
                                         <button class="btn" style="background-color: lightgreen; color: white; text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
                                     </td>
