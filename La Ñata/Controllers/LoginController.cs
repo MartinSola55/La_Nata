@@ -12,13 +12,9 @@ namespace La_Ñata.Controllers
     public class LoginController : Controller
     {
         // GET: Login
-        public ActionResult Index(User user)
+        public ActionResult Index()
         {
-            if (user == null)
-            {
-                user = new User();
-            }
-            return View(user);
+            return View(new User());
         }
         public ActionResult Logout()
         {

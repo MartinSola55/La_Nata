@@ -10,6 +10,8 @@ using System.Web.Mvc;
 using System.Xml.Linq;
 using La_Ñata.Models;
 using System.Transactions;
+using System.Data.SqlClient;
+using System.Data.Entity.Infrastructure;
 
 namespace La_Ñata.Controllers
 {
@@ -95,6 +97,37 @@ namespace La_Ñata.Controllers
             {
                 return HttpNotFound();
             }
+
+            if (TempData.Count == 1)
+            {
+                ViewBag.Message = TempData["Message"].ToString();
+            }
+            else if (TempData.Count == 2)
+            {
+                ViewBag.Message = TempData["Message"].ToString();
+                ViewBag.Error = TempData["Error"];
+            }
+
+            string date_formatted = Convert.ToDateTime(order.date.Date).ToString("yyyy-MM-dd");
+            List<Order> orders = db.Order.Where(o => DbFunctions.TruncateTime(o.date).ToString().Contains(date_formatted) && o.id != order.id).ToList();
+
+            // REVISAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAR
+            foreach (ProductOrder item in order.ProductOrder)
+            {
+                int quant_prod_orders = 0;
+                foreach (Order ord in orders)
+                {
+                    foreach (ProductOrder prod_order in ord.ProductOrder)
+                    {
+                        if (prod_order.id_product == item.id_product)
+                        {
+                            quant_prod_orders += prod_order.quantity.Value;
+                        }
+                    }
+                }
+                item.Product.stock -= quant_prod_orders;
+                item.Product.stock -= item.quantity.Value;
+            }
             return View(order);
         }
 
@@ -110,21 +143,6 @@ namespace La_Ñata.Controllers
                 db.Entry(order).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
-            }
-            return View(order);
-        }
-
-        // GET: Orders/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Order order = db.Order.Find(id);
-            if (order == null)
-            {
-                return HttpNotFound();
             }
             return View(order);
         }
@@ -320,6 +338,97 @@ namespace La_Ñata.Controllers
                 TempData["Error"] = "2";
             }
             return RedirectToAction("Index");
+        }
+
+        // GET: Add products to existing order
+        [HttpGet]
+        public ActionResult AddToExistingOrder(int? id_prod, int? quant, int real_stock, int id_order, double? old_price)
+        {
+            try
+            {
+                Order order = db.Order.Find(id_order);
+                if (id_prod != null && quant != null && order != null)
+                {
+                    List<ProductOrder> products = db.ProductOrder.Where(po => po.id_order.Equals(order.id)).ToList();
+                    if (quant.Value > 0)
+                    {
+                        ProductOrder prod = new ProductOrder
+                        {
+                            Product = db.Product
+                            .Where(p => p.id.Equals(id_prod.Value))
+                            .First()
+                        };
+
+                        if (products.Count == 0)
+                        {
+                            prod.quantity = quant.Value;
+                            prod.unit_price = prod.Product.price;
+                            prod.id_product = prod.Product.id;
+                            prod.id_order = id_order;
+                            db.ProductOrder.Add(prod);
+                            db.SaveChanges();
+                        }
+                        else
+                        {
+                            // Check for duplicate product
+                            int count = products.Count;
+                            for (int index = 0; index < count; index++)
+                            {
+                                // Add quantity to same product
+                                if (products[index].Product.id == prod.Product.id)
+                                {
+                                    // Validate to have the same price
+                                    if (old_price != null)
+                                    {
+                                        // Validate not to exceed stock
+                                        if (products[index].quantity + quant.Value <= real_stock)
+                                        {
+                                            products[index].quantity += quant.Value;
+                                            break;
+                                        }
+                                    } else
+                                    {
+                                        prod.quantity = quant.Value;
+                                        prod.unit_price = prod.Product.price;
+                                        prod.id_product = prod.Product.id;
+                                        prod.id_order = id_order;
+                                        db.ProductOrder.Add(prod);
+                                        db.SaveChanges();
+                                    }
+                                }
+                                // Add new product
+                                else if (index == products.Count - 1)
+                                {
+                                    if (old_price == null)
+                                    {
+                                        prod.unit_price = prod.Product.price;
+                                    } else
+                                    {
+                                        prod.unit_price = old_price.Value;
+                                    }
+                                    prod.quantity = quant.Value;
+                                    prod.id_product = prod.Product.id;
+                                    prod.id_order = id_order;
+                                    db.ProductOrder.Add(prod);
+                                    db.SaveChanges();
+                                }
+                            }
+                        }
+                        TempData["Message"] = "El producto se agregó correctamente a la order";
+                    }
+                }
+            }
+            catch (DbUpdateException)
+            {
+                TempData["Message"] = "Ya existe un producto con el mismo precio en la orden";
+                TempData["Error"] = 1;
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error. El producto no se ha podido agregar correctamente a la order";
+                TempData["Error"] = 2;
+            }
+            return View("Edit", new { id = id_order });
         }
     }
 }

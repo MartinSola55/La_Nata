@@ -1,93 +1,153 @@
 ﻿@model La_Ñata.Models.Order
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Pedido";
+    double total_amount = Model.ProductOrder.Sum(po => po.unit_price * po.quantity.Value);
 }
 
-<h2>Edit</h2>
+<link href="~/Content/notification.css" rel="stylesheet" />
+<link href="~/Content/table.css" rel="stylesheet" />
+<link href="~/Content/number_input.css" rel="stylesheet" />
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Order</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        @Html.HiddenFor(model => model.id)
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.client_name, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.client_name, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.client_name, "", new { @class = "text-danger" })
+@{ if (ViewBag.Message != null)
+    {
+        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtNotification">@ViewBag.Message</div>
+                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
+                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+                    </svg>
+                </button>
             </div>
         </div>
+    }
+}
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.phone, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.phone, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.phone, "", new { @class = "text-danger" })
+@Html.Hidden("id_product")
+@Html.Hidden("new_price")
+@Html.Hidden("id_order", Model.id)
+@Html.Hidden("stock")
+@Html.Hidden("datepicker", Model.date.ToString("yyyy-MM-dd"))
+<!-- Modal -->
+<div class="modal modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">Agregar al pedido</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.event_adress, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.event_adress, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.event_adress, "", new { @class = "text-danger" })
+            <div class="modal-body d-flex flex-column">
+                <div class="d-flex flex-column">
+                    <label class="pb-3 text-center" id="currentStock"></label>
+                    <div class="d-flex flex-row justify-content-center align-items-center">
+                        <div class='d-flex flex-row justify-content-center'>
+                            <div class='value-button' id='decrease_stock' onclick='decreaseValue()' value='Decrease Value'>-</div>
+                            @Html.TextBox("quantity", "", new { @type = "number", @id = "quantity", @class = "number" })
+                            <div class='value-button' id='increase_stock' onclick='increaseValue()' value='Increase Value'>+</div>
+                        </div>
+                    </div>
+                    @*@Html.ValidationMessageFor(model => model.quantity, null, new { @class = "text-center text-danger mb-4" })*@
+                </div>
             </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.date, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.shipment_price, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.shipment_price, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.shipment_price, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.observation, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.observation, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.observation, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.created_at, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.created_at, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.created_at, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.deleted_at, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.deleted_at, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.deleted_at, "", new { @class = "text-danger" })
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+            <div class="modal-footer">
+                <button id="btnSendForm" type="submit" class="btn btn-primary">Agregar</button>
+                <button id="modalCerrar" type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
+
+
+<div class="d-flex align-items-end">
+    <a class="btn btn-dark" href="../../Orders/Details/@Model.id"><i class="bi bi-arrow-left"></i></a>
+    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+        <h1 class="text-center">Editar pedido</h1>
+    </div>
+</div>
+<hr class="pb-3" />
+
+<div class="mb-5 d-flex flex-row">
+    <div class="col-12 mx-auto">
+
+        @* Tabla *@
+        <div class="table100 ver1 mb-5">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center py-1 py-lg-3 column20">Producto</th>
+                            <th class="text-center py-1 py-lg-3 column10">Cantidad</th>
+                            <th class="text-center py-1 py-lg-3 column10">Precio reserva</th>
+                            <th class="text-center py-1 py-lg-3 column10">Stock restante</th>
+                            <th class="text-center py-1 py-lg-3 column10">Precio actual</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody>
+                        @foreach (La_Ñata.Models.ProductOrder item in Model.ProductOrder)
+                        {
+                            <tr class='row100 body clickable-row' onclick="openModal(@item.id_product, @item.Product.stock)">
+                                <td class='column20 ps-xs-3 ps-2'>@item.Product.description</td>
+                                <td class='column10 text-center'>@item.quantity</td>
+                                <td class='column10 text-center'>$@item.unit_price</td>
+                                <td class='column10 text-center'>@item.Product.stock</td>
+                                <td class='column10 text-center'>$@item.Product.price</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="ps-xs-3 ps-2"><b>Total: $@total_amount.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        @* Separador *@
+        <h2 class="text-center">Agregar productos</h2>
+        <hr class="pb-3" />
+
+        @* Input búsqueda *@
+        <div class="sombra p-4 mb-3" style="border-radius: 20px; max-width: fit-content">
+            <div class="d-flex flex-row" style="max-width: fit-content">
+                <div class="d-flex flex-row">
+                    <input class="sombra form-control py-2" id="txtSearch" placeholder="Nombre" />
+                    <button id="btnSearch" type="button" class="sombra btn" style="background-color: #e06c6c">
+                        <i class="bi bi-search" style="color: white"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @* Tabla *@
+        <div class="table100 ver1 mb-5">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center py-1 py-lg-3 column20">Producto</th>
+                            <th class="text-center py-1 py-lg-3 column10">Stock</th>
+                            <th class="text-center py-1 py-lg-3 column10">Precio</th>
+                            <th class="text-center py-1 py-lg-3 column10">Precio por rotura</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/notification.js"></script>
+<script src="~/Scripts/product_edit.js"></script>

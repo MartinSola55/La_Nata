@@ -29,7 +29,7 @@
                                     <h4 class="text-white-50 mb-3">Por favor, ingrese su usuario y contraseña</h4>
 
                                     <div id="containerUser" class="form-outline form-white mb-5 text-start">
-                                        <label class="form-label">Email</label>
+                                        <label class="mt-2">Email</label>
                                         <div class="formInput">
                                             @Html.TextBoxFor(model => model.email, new { @id = "txtUser", @type = "email", @class = "form-control limpiarCampo habilitarCampo deshabilitarCampo" })
                                         </div>
@@ -37,7 +37,7 @@
                                     </div>
 
                                     <div id="containerPass" class="form-outline form-white mb-5 text-start">
-                                        <label class="form-label" for="typePasswordX">Contraseña</label>
+                                        <label class="mt-2" for="typePasswordX">Contraseña</label>
                                         <div class="formInput">
                                             @Html.TextBoxFor(model => model.password, new { @id = "txtPass", @type = "password", @class = "form-control limpiarCampo habilitarCampo deshabilitarCampo" })
                                         </div>

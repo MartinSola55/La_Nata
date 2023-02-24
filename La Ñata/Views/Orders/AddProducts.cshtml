@@ -52,6 +52,8 @@
 
 <div class="mx-xl-4 mb-5 d-flex flex-xl-row flex-column">
     <div class="col-xl-9 col-11 me-xl-3 mb-4 mx-auto">
+
+        @* Datos del pedido *@
         <div class="sombra p-4 mb-5" style="border-radius: 20px">
             <div id="searchContainer" class="d-flex flex-lg-column flex-row justify-content-between">
                 <div class="d-flex flex-lg-row flex-column me-2 me-md-0">
@@ -104,11 +106,12 @@
             </div>
         </div>
 
+        @* Input búsqueda *@
         <div class="sombra p-4 mb-5" style="border-radius: 20px; max-width: fit-content">
-            <div class="sombra d-flex flex-row" style="max-width: fit-content">
+            <div class="d-flex flex-row" style="max-width: fit-content">
                 <div class="d-flex flex-row">
-                    <input class="form-control py-2" id="txtSearch" placeholder="Nombre" />
-                    <button id="btnSearch" type="button" class="btn" style="background-color: #e06c6c">
+                    <input class="sombra form-control py-2" id="txtSearch" placeholder="Nombre" />
+                    <button id="btnSearch" type="button" class="btn  sombra" style="background-color: #e06c6c">
                         <i class="bi bi-search" style="color: white"></i>
                     </button>
                 </div>
@@ -181,7 +184,7 @@
                                     @Html.HiddenFor(model => model.Order.shipment_price)
                                     @Html.HiddenFor(model => model.Order.observation)
                                     <td class="cell100 d-flex justify-content-end pe-3">
-                                        <button class="btn" style="background-color: lightgreen; color: white; text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
+                                        <button id="btnConfirmOrder" class="btn" style="background-color: lightgreen; color: white; text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
                                     </td>
                                 }
                             </tr>

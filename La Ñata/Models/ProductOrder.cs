@@ -23,7 +23,9 @@ namespace La_Ñata.Models
         [Range(0, 100000, ErrorMessage = "Debes ingresar una cantidad entre 0 y 100.000")]
         public int? quantity { get; set; }
 
-        public double? unit_price { get; set; }
+        [Key]
+        [Column(Order = 2)]
+        public double unit_price { get; set; }
 
         public virtual Order Order { get; set; }
 

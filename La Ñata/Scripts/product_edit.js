@@ -49,6 +49,7 @@ function openModal(id, stock) {
     $("#quantity").val("");
     $("#id_product").val(id);
     $("#stock").val(stock);
+    $("#new_price").val(null);
     $("#currentStock").html("Stock existente: " + stock);
     quant = stock;
 }
@@ -58,19 +59,15 @@ $("#btnSendForm").on("click", function (e) {
     let quant = parseInt($("#quantity").val());
     let stock = parseInt($("#stock").val());
     let id_product = $("#id_product").val();
+    let id_order = $("#id_order").val();
+    let new_price = $("#new_price").val();
     if (quant <= stock) {
-        $.get("../../Orders/AddToOrder/?id_prod=" + id_product + "&quant=" + quant + "&real_stock=" + stock, function () {
-            location.reload();
-        })
+        $.get("../../Orders/AddToExistingOrder/?id_prod=" + id_product + "&quant=" + quant + "&real_stock=" + stock + "&id_order=" + id_order + "&new_price=" + new_price);
+        window.scrollTo(0, 0);
+        location.reload();
+    } else if (quant < 0) {
+        alert("Ingrese una cantidad mayor a 0");
     } else {
         alert("Ingrese una cantidad menor o igual al stock existente")
     }
-});
-
-$("#btnConfirmOrder").on("click", function (e) {
-    e.preventDefault();
-    let obs = $("#observation").val();
-    console.log(obs)
-    $("#Order_observation").val(obs);
-    $("#formCreateOrder").submit();
 });

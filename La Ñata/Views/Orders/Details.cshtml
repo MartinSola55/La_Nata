@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Pedido";
+    double total_amount = Model.ProductOrder.Sum(po => po.unit_price * po.quantity.Value);
 }
 
 <link href="~/Content/notification.css" rel="stylesheet" />
@@ -17,16 +18,18 @@
 
 <div class="mb-5 d-flex flex-row">
     <div class="col-12 mx-auto">
+
+        @* Datos del pedido *@
         <div class="sombra p-4 mb-5" style="border-radius: 20px">
             <div id="searchContainer" class="d-flex flex-lg-column flex-row justify-content-between">
                 <div class="d-flex flex-lg-row flex-column me-2 me-md-0">
                     <div class="col-xl-3 pe-lg-3">
-                        <label class="form-label">Cliente</label>
+                        <label class="mt-2">Cliente</label>
                         @Html.TextBox("client_name", Model.client_name, new { @class = "form-control py-2", @readonly = "readonly" })
                     </div>
 
                     <div class="col-xl-3 pe-lg-3">
-                        <label class="form-label">Teléfono</label>
+                        <label class="mt-2">Teléfono</label>
                         @if (Model.phone == null || Model.phone == string.Empty)
                         {
                             @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
@@ -38,19 +41,19 @@
                     </div>
 
                     <div class="col-xl-3 pe-lg-3">
-                        <label class="form-label">Dirección</label>
+                        <label class="mt-2">Dirección</label>
                         @Html.TextBox("event_adress", Model.event_adress, new { @class = "form-control py-2", @readonly = "readonly" })
                     </div>
 
                     <div class="col-xl-3">
-                        <label class="form-label">Fecha</label>
+                        <label class="mt-2">Fecha</label>
                         @Html.TextBox("date", Model.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2", @readonly = "readonly" })
                     </div>
                 </div>
                 <div class="d-flex flex-lg-row mt-lg-3 flex-column justify-content-lg-between">
 
                     <div class="col-xl-3">
-                        <label class="form-label">Flete</label>
+                        <label class="mt-2">Flete</label>
                         @if (Model.shipment_price == null)
                         {
                             @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
@@ -62,7 +65,7 @@
                     </div>
 
                     <div class="col-xl-3">
-                        <label class="form-label">Observaciones</label>
+                        <label class="mt-2">Observaciones</label>
                         @if (Model.observation == null || Model.observation == string.Empty)
                         {
                             @Html.TextBox("observation", "-", new { @class = "form-control py-2 text-center", @readonly = "readonly" })
@@ -98,7 +101,7 @@
             <div class="sombra p-4 mb-5" style="border-radius: 20px; max-width: fit-content">
                 <div class="d-flex flex-row" style="max-width: fit-content">
                     <div class="sombra d-flex flex-row me-2 me-sm-5">
-                        <a id="btnSearch" href="../../Orders/Edit/@Model.id" class="btn" style="background-color: #e06c6c; color: white">
+                        <a id="btnSearch" href="../../Orders/Edit/@Model.id" class="btn" style="background-color: yellowgreen; color: white">
                             Editar
                             <i class="bi bi-pencil" style="color: white"></i>
                         </a>
@@ -134,13 +137,16 @@
                         @foreach (La_Ñata.Models.ProductOrder item in Model.ProductOrder)
                         {
                             <tr class='row100 body'>
-                                <td class='column20 ps-3'>@item.Product.description</td>
+                                <td class='column20 ps-xs-3 ps-2'>@item.Product.description</td>
                                 <td class='column10 text-center'>@item.quantity</td>
                                 <td class='column10 text-center'>$@item.unit_price</td>
                                 <td class='column10 text-center'>$@item.Product.break_price</td>
                                 <td class='column10 text-center'>$@item.Product.price</td>
                             </tr>
                         }
+                        <tr>
+                            <td class="column20 ps-xs-3 ps-2"><b>Total: $@total_amount.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
