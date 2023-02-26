@@ -46,26 +46,48 @@ function createTable(data) {
 }
 
 function openModal(id, stock) {
+    $("#btnSendFormSubstract").css("display", "none");
     $("#quantity").val("");
     $("#id_product").val(id);
-    $("#stock").val(stock);
-    $("#new_price").val(null);
+    $("#real_stock").val(stock);
+    $("#old_price").val(null);
     $("#currentStock").html("Stock existente: " + stock);
     quant = stock;
 }
 
-$("#btnSendForm").on("click", function (e) {
+function openModalOldPrice(id, stock, old_price) {
+    $("#btnSendFormSubstract").css("display", "block");
+    $("#quantity").val("");
+    $("#id_product").val(id);
+    $("#real_stock").val(stock);
+    $("#old_price").val(old_price);
+    $("#currentStock").html("Stock existente: " + stock);
+    quant = stock;
+}
+
+$("#btnSendFormAdd").on("click", function (e) {
     e.preventDefault();
     let quant = parseInt($("#quantity").val());
-    let stock = parseInt($("#stock").val());
-    let id_product = $("#id_product").val();
-    let id_order = $("#id_order").val();
-    let new_price = $("#new_price").val();
-    if (quant <= stock) {
-        $.get("../../Orders/AddToExistingOrder/?id_prod=" + id_product + "&quant=" + quant + "&real_stock=" + stock + "&id_order=" + id_order + "&new_price=" + new_price);
-        window.scrollTo(0, 0);
-        location.reload();
-    } else if (quant < 0) {
+    let stock = parseInt($("#real_stock").val());
+    if (quant <= stock && quant > 0) {
+        $("#price").attr("name", "old_price");
+        $("#formEditOrder").attr("action", "/Orders/AddToExistingOrder");
+        $("#formEditOrder").submit();
+    } else if (quant <= 0) {
+        alert("Ingrese una cantidad mayor a 0");
+    } else {
+        alert("Ingrese una cantidad menor o igual al stock existente")
+    }
+});
+
+$("#btnSendFormSubstract").on("click", function (e) {
+    e.preventDefault();
+    let quant = parseInt($("#quantity").val());
+    if (quant > 0) {
+        $("#old_price").attr("name", "price");
+        $("#formEditOrder").attr("action", "/Orders/RemoveFromExistingOrder");
+        $("#formEditOrder").submit();
+    } else if (quant <= 0) {
         alert("Ingrese una cantidad mayor a 0");
     } else {
         alert("Ingrese una cantidad menor o igual al stock existente")

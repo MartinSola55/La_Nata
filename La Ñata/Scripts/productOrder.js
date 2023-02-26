@@ -58,10 +58,12 @@ $("#btnSendForm").on("click", function (e) {
     let quant = parseInt($("#quantity").val());
     let stock = parseInt($("#stock").val());
     let id_product = $("#id_product").val();
-    if (quant <= stock) {
+    if (quant <= stock && quant > 0) {
         $.get("../../Orders/AddToOrder/?id_prod=" + id_product + "&quant=" + quant + "&real_stock=" + stock, function () {
             location.reload();
         })
+    } else if (quant <= 0) {
+        alert("Ingrese una cantidad mayor a 0");
     } else {
         alert("Ingrese una cantidad menor o igual al stock existente")
     }
