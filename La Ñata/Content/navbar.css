@@ -9,9 +9,9 @@
 }
 
 .navbar-mainbg {
-    background-color: #e06c6c;
+    background-color: #bd713b;
     padding: 0px;
-    background-image: linear-gradient(to bottom, transparent, #30003ed6);
+    background-image: linear-gradient(to bottom, transparent, #000000d6);
 }
 
 #navbarContainer ul li a i {

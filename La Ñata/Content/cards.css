@@ -26,7 +26,7 @@
     line-height: 1;
     padding-bottom: 0.5em;
     margin: 0 0 0.142857143em;
-    border-bottom: 2px solid #753bbd;
+    border-bottom: 2px solid #bd713b;
     transition: color 0.45s ease, border 0.45s ease;
  }
 
@@ -53,7 +53,7 @@
 
 .data-card .link-text {
     display: block;
-    color: #753bbd;
+    color: #bd713b;
     font-size: 1.125em;
     font-weight: 600;
     line-height: 1.2;
@@ -67,22 +67,23 @@
 }
 
 .data-card .link-text svg path {
-        transition: fill 0.45s ease;
+    transition: fill 0.45s ease;
+    fill: #bd713b;
 }
 
 .data-card:hover {
-    background: #753bbd;
+    background: #c165009b;
     transform: scale(1.02);
 }
 
 .data-card:hover h3 {
     color: #ffffff;
-    border-bottom-color: #a754c4;
+    border-bottom-color: #cb2500;
 }
 
 .data-card:hover h4 {
     color: #ffffff;
-    border-bottom-color: #a754c4;
+    border-bottom-color: #bd713b;
 }
 
 .data-card:hover p {
@@ -91,7 +92,7 @@
 }
 
 .data-card:hover .link-text {
-    color: #ffffff;
+    color: #cb2500;
 }
 
 .data-card:hover .link-text svg {
@@ -99,7 +100,7 @@
 }
 
 .data-card:hover .link-text svg path {
-    fill: #ffffff;
+    fill: #cb2500;
 }
 
 @keyframes point {

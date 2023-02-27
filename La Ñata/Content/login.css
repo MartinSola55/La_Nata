@@ -2,9 +2,9 @@
     /* fallback for old browsers */
     background: #003a9c;
     /* Chrome 10-25, Safari 5.1-6 */
-    background: -webkit-linear-gradient(to bottom, rgb(0, 0, 0), rgb(0, 58, 156));
+    background: -webkit-linear-gradient(to bottom, #000, #324b60);
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    background: linear-gradient(to bottom, rgb(0, 0, 0), rgb(0, 58, 156))
+    background: linear-gradient(to bottom, #000, #324b60)
 }
 
 #NotifContainer {

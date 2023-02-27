@@ -592,7 +592,7 @@ namespace La_Ñata.Controllers
                     json = new JavaScriptSerializer().Serialize(products);
                     var report = new ActionAsPdf("ReportWithPrice", new { json })
                     {
-                        FileName = "Detalle orden " + order.client_name + " - " + order.date.ToString("dd-MM-yyyy") + ".pdf",
+                        FileName = "Detalle con precio " + order.client_name + " - " + order.date.ToString("dd-MM-yyyy") + ".pdf",
                     };
                     return report;
                 }
@@ -608,11 +608,12 @@ namespace La_Ñata.Controllers
                             EventAdress = po.Order.event_adress,
                             Date = po.Order.date,
                         })
+                        .OrderByDescending(po => po.Quantity)
                         .ToList();
                     json = new JavaScriptSerializer().Serialize(products);
                     var report = new ActionAsPdf("ReportWithoutPrice", new { json })
                     {
-                        FileName = "Detalle orden " + order.client_name + " - " + order.date.ToString("dd-MM-yyyy") + ".pdf",
+                        FileName = "Detalle sin precio " + order.client_name + " - " + order.date.ToString("dd-MM-yyyy") + ".pdf",
                     };    
                     return report;
                 }

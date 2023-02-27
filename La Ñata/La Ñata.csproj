@@ -217,8 +217,6 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Products\Create.cshtml" />
     <Content Include="Views\Products\Index.cshtml" />
-    <Content Include="Views\Expenses\Create.cshtml" />
-    <Content Include="Views\Expenses\Edit.cshtml" />
     <Content Include="Views\Expenses\Index.cshtml" />
     <Content Include="Views\Orders\Create.cshtml" />
     <Content Include="Views\Orders\Details.cshtml" />
