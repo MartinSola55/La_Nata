@@ -226,7 +226,7 @@ namespace La_Ñata.Controllers
             }
         }
 
-        // GET: Print report
+        
         public ActionResult Report(string json)
         {
             try
@@ -249,7 +249,9 @@ namespace La_Ñata.Controllers
             }
         }
 
+        // GET: Print report
         [Security]
+        [HttpGet]
         public ActionResult Print(string dates_range)
         {
             try

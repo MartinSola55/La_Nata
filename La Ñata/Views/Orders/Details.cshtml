@@ -108,18 +108,31 @@
         <div class="d-flex flex-lg-row flex-column justify-content-lg-between">
             <div class="sombra p-4 mb-lg-5 mb-2" style="border-radius: 20px; max-width: fit-content">
                 <div class="d-flex flex-row" style="max-width: fit-content">
-                    <div class="sombra d-flex flex-row me-2 me-sm-5">
-                        <a href="#" class="btn" style="background-color: #e06c6c; color: white">
-                            Detalle sin precio
-                            <i class="bi bi-printer" style="color: white"></i>
-                        </a>
-                    </div>
-                    <div class="sombra d-flex flex-row me-2 me-sm-5">
-                        <a href="#" class="btn" style="background-color: #e06c6c; color: white">
-                            Detalle con precio
-                            <i class="bi bi-printer" style="color: white"></i>
-                        </a>
-                    </div>
+
+                    @* Imprimir sin precio *@
+                    @using (Html.BeginForm("Print", "Orders", FormMethod.Get))
+                    {
+                        @Html.Hidden("id_order", Model.id);
+                        @Html.Hidden("price", false);
+                        <div class="sombra d-flex flex-row me-2 me-sm-5">
+                            <button type="submit" class="btn" style="background-color: #e06c6c; color: white">
+                                Detalle sin precio
+                                <i class="bi bi-printer" style="color: white"></i>
+                            </button>
+                        </div>
+                    }
+                    @* Imprimir con precio *@
+                    @using (Html.BeginForm("Print", "Orders", FormMethod.Get))
+                    {
+                        @Html.Hidden("id_order", Model.id);
+                        @Html.Hidden("price", true);
+                        <div class="sombra d-flex flex-row me-2 me-sm-5">
+                            <button type="submit" class="btn" style="background-color: #e06c6c; color: white">
+                                Detalle con precio
+                                <i class="bi bi-printer" style="color: white"></i>
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
 
@@ -169,8 +182,23 @@
                                 <td class='column10 text-center'>$@item.Product.price</td>
                             </tr>
                         }
+                        @if (Model.shipment_price != null)
+                        {
+                            <tr>
+                                <td class='column20 ps-xs-3 ps-2'>Flete</td>
+                                <td class='column10 text-center'>1</td>
+                                <td class='column10 text-center'>$@Model.shipment_price</td>
+                                <td class='column10 text-center'>-</td>
+                                <td class='column10 text-center'>-</td>
+                            </tr>
+                            total_amount += Model.shipment_price.Value;
+                        }
                         <tr>
                             <td class="column20 ps-xs-3 ps-2"><b>Total: $@total_amount.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>

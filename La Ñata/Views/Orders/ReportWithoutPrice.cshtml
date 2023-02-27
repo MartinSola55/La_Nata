@@ -1,0 +1,97 @@
+﻿@{
+    Layout = null;
+    int i = 0;
+}
+@model IEnumerable<La_Ñata.Controllers.OrdersController.ReportViewModel>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+</head>
+
+@try
+{
+    <body class="container mt-5" style="font-family: 'Open Sans', sans-serif;">
+        <div class="container">
+            <table class="d-flex mb-3" style="border: none">
+                <tbody style="border: none">
+                    <tr style="border: none">
+                        <td style="border: none; width: 30%">
+                            <img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 400px; max-height: 100px;">
+                            <p class="my-3" style="font-family: 'Roboto', sans-serif; font-style: italic; font-weight: 700">Alquiler de sillas, mesas, vajillas y mantelería</p>
+                            <p class="mb-0" style="font-family: 'Roboto', sans-serif; font-style:normal">
+                                <b>Cliente:</b> @Model.First().ClientName <br />
+                                <b>Fecha:</b> @Model.First().Date.ToString("dd/MM/yyyy")<br />
+                                <b>Lugar:</b> @Model.First().EventAdress
+                            </p>
+                        </td>
+                        <td style="border: none; width: 30%"></td>
+                        <td class="text-end d-flex justify-content-end align-items-end" style="border: none; width: 40%">
+                            <div class="p-3 mb-2" style="background-color: #c9c9c9; border-radius: 3px">
+                                <p class="text-center mb-0 fw-bold fst-italic"> COMPROBANTE DE ENTREGA <br />PARA ALQUILER DE ENSERES</p>
+                            </div>
+                            <p class="mb-0 text-center" style="font-family: 'Roboto', sans-serif; font-style:normal; font-weight: 700">
+                                13 de Mayo - Tel: 03404-420949 / 15458425<br />
+                                3013 - San Carlos Centro - Santa Fe
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @* Detalle *@
+            <h1 class="text-start mt-5">DETALLE</h1>
+            <hr class="mb-3" />
+
+            <table class="table table-light table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <td class="text-center" style="font-weight:600">Producto</td>
+                        <td class="text-center" style="font-weight:600">Cantidad</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (La_Ñata.Controllers.OrdersController.ReportViewModel product in Model)
+                    {
+                        i++;
+                        if (i % 2 == 0)
+                        {
+                            <tr>
+                                <td>@product.Description</td>
+                                <td class="text-center">@product.Quantity</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="background-color: #ecedee">
+                                <td>@product.Description</td>
+                                <td class="text-center">@product.Quantity</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <table class="d-flex mb-3 mt-5 mx-auto justify-content-center" style="border: none">
+                <tbody style="border: none">
+                    <tr style="border: none">
+                        <td style="border: none">
+                            <b class="mt-0 text-center">La Ñata - Todos los derechos reservados ©</b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+}
+catch (Exception)
+{
+    <p class="text-center">Ocurrio un error al intentar imprimir el reporte</p>
+}
+</html>

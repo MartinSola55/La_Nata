@@ -12,15 +12,17 @@ using La_Ñata.Models;
 using System.Transactions;
 using System.Data.SqlClient;
 using System.Data.Entity.Infrastructure;
+using Rotativa;
+using System.Web.Script.Serialization;
 
 namespace La_Ñata.Controllers
 {
-    [Security]
     public class OrdersController : Controller
     {
         private EFModel db = new EFModel();
 
         // GET: Orders
+        [Security]
         public ActionResult Index(string date)
         {
             try
@@ -47,6 +49,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Orders/Details/5
+        [Security]
         public ActionResult Details(int? id)
         {
             try
@@ -80,12 +83,14 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Orders/Create
+        [Security]
         public ActionResult Create()
         {
             return View(new Order());
         }
 
         // GET: Orders/Edit/5
+        [Security]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -146,6 +151,7 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Orders/Delete/5
+        [Security]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
@@ -165,6 +171,7 @@ namespace La_Ñata.Controllers
             return RedirectToAction("Index");
         }
 
+        [Security]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -175,6 +182,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Orders by date
+        [Security]
         public JsonResult OrdersByDate(string date)
         {
             try
@@ -201,6 +209,7 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Add products to order
+        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddProducts(Order order)
@@ -214,6 +223,7 @@ namespace La_Ñata.Controllers
 
 
         // GET: Add products to order
+        [Security]
         [HttpGet]
         public void AddToOrder(int? id_prod, int? quant, int real_stock)
         {
@@ -276,6 +286,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Remove products from order
+        [Security]
         [HttpGet]
         public void RemoveProduct(int? id_prod)
         {
@@ -304,6 +315,7 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Create order
+        [Security]
         [HttpPost, ActionName("Create")]
         [ValidateAntiForgeryToken]
         public ActionResult CreateOrder(Order order)
@@ -348,6 +360,7 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Add products to existing order
+        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult AddToExistingOrder(int? id_product, int? quantity, int real_stock, int id_order, double? old_price)
@@ -457,6 +470,7 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Remove products from existing order
+        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RemoveFromExistingOrder(int? id_product, int id_order, double? price, int? quantity)
@@ -513,6 +527,113 @@ namespace La_Ñata.Controllers
                 TempData["Error"] = 2;
             }
             return RedirectToAction("Edit", new { id = id_order });
+        }
+
+
+        
+        public ActionResult ReportWithPrice(string json)
+        {
+            try
+            {
+                List<ReportViewModel> model = new JavaScriptSerializer().Deserialize<List<ReportViewModel>>(json);
+                
+                return View(model);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado. No se ha podido generar el detalle";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
+            }
+        }
+
+        public ActionResult ReportWithoutPrice(string json)
+        {
+            try
+            {
+                List<ReportViewModel> model = new JavaScriptSerializer().Deserialize<List<ReportViewModel>>(json);
+                
+                return View(model);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado. No se ha podido generar el detalle";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
+            }
+        }
+
+        // GET: Print report
+        [Security]
+        [HttpGet]
+        public ActionResult Print(int id_order, bool price)
+        {
+            try
+            {
+                Order order = db.Order.Find(id_order);
+                string json;
+                if (price)
+                {
+                    var products = db.ProductOrder
+                        .Where(po => po.id_order.Equals(id_order))
+                        .Select(po => new
+                        {
+                            Description = po.Product.description,
+                            Quantity = po.quantity,
+                            UnitPrice = po.unit_price,
+                            BreakPrice = po.Product.break_price,
+                            ClientName = po.Order.client_name,
+                            EventAdress = po.Order.event_adress,
+                            Date = po.Order.date,
+                            ShipmentPrice = po.Order.shipment_price,
+                        })
+                        .OrderByDescending(po => po.Quantity)
+                        .ToList();
+                    json = new JavaScriptSerializer().Serialize(products);
+                    var report = new ActionAsPdf("ReportWithPrice", new { json })
+                    {
+                        FileName = "Detalle orden " + order.client_name + " - " + order.date.ToString("dd-MM-yyyy") + ".pdf",
+                    };
+                    return report;
+                }
+                else
+                {
+                    var products = db.ProductOrder
+                        .Where(po => po.id_order.Equals(id_order))
+                        .Select(po => new
+                        {
+                            Description = po.Product.description,
+                            Quantity = po.quantity,
+                            ClientName = po.Order.client_name,
+                            EventAdress = po.Order.event_adress,
+                            Date = po.Order.date,
+                        })
+                        .ToList();
+                    json = new JavaScriptSerializer().Serialize(products);
+                    var report = new ActionAsPdf("ReportWithoutPrice", new { json })
+                    {
+                        FileName = "Detalle orden " + order.client_name + " - " + order.date.ToString("dd-MM-yyyy") + ".pdf",
+                    };    
+                    return report;
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado. No se ha podido generar el detalle";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
+            }
+        }
+        public class ReportViewModel
+        {
+            public string Description { get; set; }
+            public int Quantity { get; set; }
+            public double UnitPrice { get; set; }
+            public double BreakPrice { get; set; }
+            public string ClientName { get; set; }
+            public string EventAdress { get; set; }
+            public DateTime Date { get; set; }
+            public double? ShipmentPrice { get; set; }
         }
     }
 }
