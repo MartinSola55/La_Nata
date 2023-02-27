@@ -17,6 +17,15 @@ $(document).ready(function () {
     })
 });
 
+$("#printReport").on("click", function (e) {
+    e.preventDefault();
+    let date_from = $("#datepicker").data('daterangepicker').startDate.format('YYYY-MM-DD');
+    let date_to = $("#datepicker").data('daterangepicker').endDate.format('YYYY-MM-DD');
+    let dates = [date_from, date_to];
+    $("#dates_range").val(dates);
+    $("#formReport").submit();
+});
+
 $("#datepicker").on("apply.daterangepicker", function (ev, picker) {
     let date_from = picker.startDate.format('YYYY-MM-DD');
     let date_to = picker.endDate.format('YYYY-MM-DD');

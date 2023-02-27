@@ -110,12 +110,17 @@
                         <i class="bi bi-plus-circle"></i>
                     </button>
                 </div>
-                <div class="sombra d-flex flex-row">
-                    <a href="#" class="btn" style="background-color: #e06c6c; color: white">
-                        Imprimir constancia
-                        <i class="bi bi-printer" style="color: white"></i>
-                    </a>
-                </div>
+                @using (Html.BeginForm("Print", "Expenses", FormMethod.Get, new { @id = "formReport" }))
+                {
+                    @Html.Hidden("dates_range");
+                    <div class="sombra d-flex flex-row">
+                        <button id="printReport" class="btn" type="button" style="background-color: #e06c6c; color: white">
+                            Imprimir constancia
+                            <i class="bi bi-printer" style="color: white"></i>
+                        </button>
+                    </div>
+                
+                }
             </div>
         </div>
 

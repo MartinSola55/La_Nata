@@ -4,18 +4,22 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Security.Cryptography.Xml;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using La_Ñata.Models;
+using Rotativa;
 
 namespace La_Ñata.Controllers
 {
-    [Security]
     public class ExpensesController : Controller
     {
         private EFModel db = new EFModel();
 
         // GET: Expenses
+        [Security]
         public ActionResult Index()
         {
             try
@@ -40,6 +44,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Expenses/Create
+        [Security]
         public ActionResult Create()
         {
             return View();
@@ -48,6 +53,7 @@ namespace La_Ñata.Controllers
         // POST: Expenses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "date,description,price")] Expense expense)
@@ -75,6 +81,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Expenses/Edit/5
+        [Security]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -92,6 +99,7 @@ namespace La_Ñata.Controllers
         // POST: Expenses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "id,date,description,price")] Expense expense_edited)
@@ -124,6 +132,7 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Expenses/Delete/5
+        [Security]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int expense_id)
@@ -153,6 +162,7 @@ namespace La_Ñata.Controllers
             }
         }
 
+        [Security]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -163,6 +173,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Expenses by date
+        [Security]
         [HttpGet]
         public JsonResult ExpensesByDate(string dates)
         {
@@ -192,6 +203,7 @@ namespace La_Ñata.Controllers
         }
 
         // GET: get one Expense
+        [Security]
         [HttpGet]
         public JsonResult GetOne(int id)
         {
@@ -212,6 +224,80 @@ namespace La_Ñata.Controllers
             {
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        // GET: Print report
+        public ActionResult Report(string json)
+        {
+            try
+            {
+                ReportViewModel model = new JavaScriptSerializer().Deserialize<ReportViewModel>(json);
+                List<Order> orders = new List<Order>();
+                foreach (int order_id in model.IDOrders)
+                {
+                    Order order = db.Order.Find(order_id);
+                    orders.Add(order);
+                }
+                model.Orders = orders;
+                return View(model);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado. No se ha podido generar el reporte";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Security]
+        public ActionResult Print(string dates_range)
+        {
+            try
+            {
+                ReportViewModel model = new ReportViewModel();
+
+                string[] dates_formated = dates_range.Trim().Split(',');
+                DateTime date_from = Convert.ToDateTime(dates_formated[0]);
+                DateTime date_to = Convert.ToDateTime(dates_formated[1]);
+
+                List<Expense> expenses = db.Expense
+                    .Where(e => e.date >= date_from && e.date <= date_to && e.deleted_at.Equals(null))
+                    .OrderByDescending(e => e.date).ThenByDescending(e => e.price)
+                    .ToList();
+
+                List<int> orders = db.Order
+                    .Where(o => o.date >= date_from && o.date <= date_to && o.deleted_at.Equals(null))
+                    .Select(o => o.id)
+                    .ToList();
+
+                model.Expenses = expenses;
+                model.IDOrders = orders;
+                model.DateFrom = date_from;
+                model.DateTo = date_to;
+
+
+                var json = new JavaScriptSerializer().Serialize(model);
+
+                var report = new ActionAsPdf("Report", new { json })
+                {
+                    FileName = "Reporte balance " + model.DateFrom.ToString("dd-MM-yyyy") + " al " + model.DateTo.ToString("dd-MM-yyyy") + ".pdf",
+                };
+                return report;
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado. No se ha podido generar el reporte";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
+            }
+        }
+        public class ReportViewModel
+        {
+            public List<Expense> Expenses { get; set; }
+            public List<int> IDOrders { get; set; }
+            public List<Order> Orders { get; set; }
+            public DateTime DateFrom { get; set; }
+            public DateTime DateTo { get; set; }
         }
     }
 }

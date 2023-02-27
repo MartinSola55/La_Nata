@@ -1,0 +1,164 @@
+﻿@{
+    Layout = null;
+    int i = 0;
+    double totalIncome = 0;
+    double totalExpenses = 0;
+}
+@model La_Ñata.Controllers.ExpensesController.ReportViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans&display=swap" rel="stylesheet">
+</head>
+
+@try
+{
+    <body class="container mt-5" style="font-family: 'Open Sans', sans-serif;">
+        <div class="container">
+            <table class="d-flex mb-3" style="border: none">
+                <tbody class="w-100" style="border: none">
+                    <tr class="d-flex w-100" style="border: none">
+                        <td style="border: none"><img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 300px; max-height: 100px;"></td>
+                        <td class="w-100 text-end align-self-end" style="border: none">
+                            <p class="align-self-end mb-0">Reporte de gastos e ingresos entre <b>@Model.DateFrom.ToString("dd/MM/yyyy")</b> y <b>@Model.DateTo.ToString("dd/MM/yyyy")</b></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @* Gastos *@
+            <h1 class="text-start mt-5">GASTOS</h1>
+            <hr class="pb-3" />
+
+            <table class="table table-light table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <td class="text-center" style="font-weight:600">Descripción</td>
+                        <td class="text-center" style="font-weight:600">Fecha</td>
+                        <td class="text-center" style="font-weight:600">Monto</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (La_Ñata.Models.Expense expense in Model.Expenses)
+                    {
+                        i++;
+                        if (i % 2 == 0)
+                        {
+                            <tr>
+                                <td>@expense.description</td>
+                                <td class="text-center">@expense.date.ToString("dd/MM/yyyy")</td>
+                                <td class="text-center">$@expense.price</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="background-color: #ecedee">
+                                <td>@expense.description</td>
+                                <td class="text-center">@expense.date.ToString("dd/MM/yyyy")</td>
+                                <td class="text-center">$@expense.price</td>
+                            </tr>
+                        }
+                        totalExpenses += expense.price;
+                    }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">
+                            <b>Total: $@totalExpenses.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            @* Ingresos *@
+            <h1 class="text-start mt-5">INGRESOS</h1>
+            <hr class="pb-3" />
+
+            <table class="table table-light table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <td class="text-center" style="font-weight:600">Cliente</td>
+                        <td class="text-center" style="font-weight:600">Dirección</td>
+                        <td class="text-center" style="font-weight:600">Fecha</td>
+                        <td class="text-center" style="font-weight:600">Flete</td>
+                        <td class="text-center" style="font-weight:600">Total</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        double? totalOrder = 0;
+                        totalOrder = order.ProductOrder.Sum(po => (po.unit_price * po.quantity)) + (order.shipment_price ?? 0);
+                        i++;
+                        if (i % 2 == 0)
+                        {
+                            <tr>
+                                <td>@order.client_name</td>
+                                <td>@order.event_adress</td>
+                                <td class="text-center">@order.date.ToString("dd/MM/yyyy")</td>
+                                @if (order.shipment_price != null)
+                                {
+                                    <td class="text-center">$@order.shipment_price</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center">-</td>
+                                }
+                                <td class="text-center">$@totalOrder</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            <tr style="background-color: #ecedee">
+                                <td>@order.client_name</td>
+                                <td>@order.event_adress</td>
+                                <td class="text-center">@order.date.ToString("dd/MM/yyyy")</td>
+                                @if (order.shipment_price != null)
+                                {
+                                    <td class="text-center">$@order.shipment_price</td>
+                                }
+                                else
+                                {
+                                    <td class="text-center">-</td>
+                                }
+                                <td class="text-center">$@totalOrder</td>
+                            </tr>
+                        }
+                        totalIncome += totalOrder.Value;
+                    }
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-end">
+                            <b>Total: $@totalIncome.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <table class="d-flex mb-3 mt-5 mx-auto justify-content-center" style="border: none">
+                <tbody style="border: none">
+                    <tr style="border: none">
+                        <td style="border: none">
+                            <b class="mt-0 text-center">La Ñata - Todos los derechos reservados ©</b>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </body>
+}
+catch (Exception)
+{
+    <p class="text-center">Ocurrio un error al intentar imprimir el reporte</p>
+}
+</html>
