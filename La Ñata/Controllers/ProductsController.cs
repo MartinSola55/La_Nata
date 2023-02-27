@@ -147,11 +147,11 @@ namespace La_Ñata.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult DeleteConfirmed(int expense_id)
         {
             try
             {
-                Product product = db.Product.Find(id);
+                Product product = db.Product.Find(expense_id);
                 if (product != null)
                 {
                     product.deleted_at = DateTime.UtcNow.AddHours(-3);

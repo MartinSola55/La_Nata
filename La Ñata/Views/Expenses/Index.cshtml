@@ -1,45 +1,152 @@
-﻿@model IEnumerable<La_Ñata.Models.Expense>
+﻿@model La_Ñata.Models.Expense
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Gastos";
 }
 
-<h2>Index</h2>
+<link href="~/Content/number_input.css" rel="stylesheet" />
+<link href="~/Content/notification.css" rel="stylesheet" />
+<link href="~/Content/table.css" rel="stylesheet" />
+<link href="~/Content/daterangepicker.css" rel="stylesheet" />
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.date)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.price)
-        </th>
-        <th></th>
-    </tr>
+<h1 class="text-center">Gastos</h1>
+<hr class="mb-3" />
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.date)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.description)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.price)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.id })
-        </td>
-    </tr>
+
+@{ if (ViewBag.Message != null)
+    {
+        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtNotification">@ViewBag.Message</div>
+                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
+                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    }
 }
 
-</table>
+@* Modal to delete an expense *@
+@using (Html.BeginForm("Delete", "Expenses", FormMethod.Post, new { @id = "formDeleteOrder" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.Hidden("expense_id");
+    <!-- Modal -->
+    <div class="modal fade" id="modalExpenseDelete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalExpenseDeleteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalExpenseDeleteLabel">Eliminar orden</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro deseas eliminar este gasto?
+                </div>
+                <div class="modal-footer d-flex justify-content-between justify-content-lg-end px-3">
+                    <button type="submit" class="btn me-lg-4" style="background-color: yellowgreen">Confirmar</button>
+                    <button type="button" class="btn" style="background-color: crimson; color: white" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Modal to edit or add an expense *@
+@using (Html.BeginForm("Edit", "Expenses", FormMethod.Post, new { @id = "formExpense" }))
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(model => model.id, new { @id = "id_expense" })
+
+    <!-- Modal -->
+    <div class="modal modal-lg" id="modalExpense" tabindex="-1" aria-labelledby="modalExpenseLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalExpenseLabel">Eliminar orden</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body d-flex flex-column mx-auto">
+                    <div class="d-flex flex-column">
+                        <label for="date">Fecha</label>
+                        @Html.TextBoxFor(model => model.date, null, new { @class = "form-control cleanField" })
+                        @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="d-flex flex-column mt-2">
+                        <label for="price">Precio</label>
+                        @Html.TextBoxFor(model => model.price, null, new { @class = "form-control cleanField", @type = "number" })
+                        @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger" })
+                    </div>
+                    <div class="d-flex flex-column mt-2">
+                        <label for="description">Descripción</label>
+                        @Html.TextAreaFor(model => model.description, new { @class = "form-control cleanField", @rows = "4", @cols = "40" })
+                        @Html.ValidationMessageFor(model => model.description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-end me-3">
+                    <button id="btnSendForm" type="submit" class="btn me-lg-4" style="background-color: yellowgreen">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="mb-5 d-flex flex-row">
+    <div class="col-xl-9 col-11 mx-auto">
+
+        @* Input fecha *@
+        <div class="sombra p-4 mb-4 d-flex flex-column flex-md-row justify-content-between" style="border-radius: 20px">
+            <div id="searchContainer" class="d-flex justify-content-center ">
+                <div class="d-flex flex-row">
+                    <input type="text" class="form-control py-2" id="datepicker" readonly placeholder="dd/mm/aaaa" />
+                </div>
+            </div>
+
+            @* Botones *@
+            <div class="d-flex flex-row ms-md-4 mt-md-0 mt-4 justify-content-between">
+                <div class="sombra d-flex flex-row me-4 me-sm-5">
+                    <button type="button" id="btnAdd" class="btn text-white" style="background-color: #e06c6c" onclick='openModal()' data-bs-toggle='modal' data-bs-target='#modalExpense'>
+                        <i class="bi bi-plus-circle"></i>
+                    </button>
+                </div>
+                <div class="sombra d-flex flex-row">
+                    <a href="#" class="btn" style="background-color: #e06c6c; color: white">
+                        Imprimir constancia
+                        <i class="bi bi-printer" style="color: white"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        @* Tabla *@
+        <div class="table100 ver1 m-b-110">
+            <div class="table100-head">
+                <table>
+                    <thead>
+                        <tr class="row100 head">
+                            <th class="text-center py-3 column20">Descripción</th>
+                            <th class="text-center py-3 column10">Precio</th>
+                            <th class="text-center py-3 column10">Fecha</th>
+                            <th class="text-center py-3 column10">Eliminar</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+            <div class="table100-body js-pscroll ps ps--active-y">
+                <table>
+                    <tbody id="contentTable">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script src="~/Scripts/moment-with-locales.js"></script>
+<script src="~/Scripts/daterangepicker.js"></script>
+<script src="~/Scripts/expenses.js"></script>
+<script src="~/Scripts/notification.js"></script>

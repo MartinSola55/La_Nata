@@ -2,12 +2,10 @@
 
 @{
     ViewBag.Title = "Productos";
-    La_Ñata.Models.User user = Session["User"] as La_Ñata.Models.User;
 }
 
 <link href="~/Content/number_input.css" rel="stylesheet" />
 <link href="~/Content/notification.css" rel="stylesheet" />
-<link href="~/Content/products.css" rel="stylesheet" />
 <link href="~/Content/table.css" rel="stylesheet" />
 
 <h1 class="text-center">Stock</h1>
@@ -34,14 +32,14 @@
 
         @* Input búsqueda *@
         <div class="sombra p-4 mb-5" style="border-radius: 20px">
-            <div id="searchContainer" class="d-flex justify-content-between">
+            <div id="searchContainer" class="d-flex justify-content-between flex-column flex-md-row">
                 <div class="d-flex flex-row">
                     <input class="form-control py-2" id="txtSearch" placeholder="Nombre" />
                     <button id="btnSearch" type="button" class="btn" style="background-color: #e06c6c">
                         <i class="bi bi-search" style="color: white"></i>
                     </button>
                 </div>
-                <a id="btnAdd" class="btn text-white my-auto" href="../../Products/Create" style="background-color: #e06c6c">Agregar</a>
+                <a id="btnAdd" class="btn text-white me-auto me-md-0 mt-md-0 mt-3" href="../../Products/Create" style="background-color: #e06c6c">Agregar</a>
             </div>
         </div>
 

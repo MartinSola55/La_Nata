@@ -16,6 +16,9 @@ namespace La_Ñata.Models
         [Required]
         public string description { get; set; }
 
+        [Required]
         public double price { get; set; }
+
+        public DateTime? deleted_at { get; set; }
     }
 }
