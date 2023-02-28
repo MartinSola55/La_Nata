@@ -8,7 +8,7 @@ namespace La_Ñata.Models
     public partial class EFModel : DbContext
     {
         public EFModel()
-            : base("name=EFModel")
+            : base("name=AzureDB")
         {
         }
 
