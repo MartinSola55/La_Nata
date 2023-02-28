@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.Xml;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -17,6 +19,10 @@ namespace La_Ñata.Controllers
     public class ExpensesController : Controller
     {
         private EFModel db = new EFModel();
+        private string ToUpperFirst(string title)
+        {
+            return title.ToUpper()[0] + title.ToLower().Substring(1);
+        }
 
         // GET: Expenses
         [Security]
@@ -43,13 +49,6 @@ namespace La_Ñata.Controllers
             }
         }
 
-        // GET: Expenses/Create
-        [Security]
-        public ActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Expenses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -62,6 +61,7 @@ namespace La_Ñata.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    expense.description = ToUpperFirst(expense.description);
                     db.Expense.Add(expense);
                     db.SaveChanges();
                     TempData["Message"] = "El gasto se creó correctamente";
@@ -80,22 +80,6 @@ namespace La_Ñata.Controllers
             return RedirectToAction("Index");
         }
 
-        // GET: Expenses/Edit/5
-        [Security]
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Expense expense = db.Expense.Find(id);
-            if (expense == null)
-            {
-                return HttpNotFound();
-            }
-            return View(expense);
-        }
-
         // POST: Expenses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -110,7 +94,7 @@ namespace La_Ñata.Controllers
                 {
                     Expense expense = db.Expense.Find(expense_edited.id);
                     expense.date = expense_edited.date;
-                    expense.description = expense_edited.description;
+                    expense.description = expense.description = ToUpperFirst(expense_edited.description); ;
                     expense.price = expense_edited.price;
                     db.SaveChanges();
                     TempData["Message"] = "El gasto se guardó correctamente";
@@ -144,7 +128,7 @@ namespace La_Ñata.Controllers
                 {
                     expense.deleted_at = DateTime.UtcNow.AddHours(-3);
                     db.SaveChanges();
-                    TempData["Message"] = "El gasto fue eliminado";
+                    TempData["Message"] = "El gasto se eliminó correctamente";
                     return RedirectToAction("Index");
                 }
                 else
@@ -202,7 +186,7 @@ namespace La_Ñata.Controllers
             }
         }
 
-        // GET: get one Expense
+        // GET: Get one Expense
         [Security]
         [HttpGet]
         public JsonResult GetOne(int id)
@@ -225,7 +209,6 @@ namespace La_Ñata.Controllers
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
         }
-
         
         public ActionResult Report(string json)
         {
@@ -238,6 +221,7 @@ namespace La_Ñata.Controllers
                     Order order = db.Order.Find(order_id);
                     orders.Add(order);
                 }
+                
                 model.Orders = orders;
                 return View(model);
             }
@@ -269,6 +253,7 @@ namespace La_Ñata.Controllers
 
                 List<int> orders = db.Order
                     .Where(o => o.date >= date_from && o.date <= date_to && o.deleted_at.Equals(null))
+                    .OrderByDescending(o => o.date).ThenByDescending(o => o.ProductOrder.Sum(po => (po.unit_price * po.quantity.Value)) + (o.shipment_price ?? 0))
                     .Select(o => o.id)
                     .ToList();
 
@@ -293,6 +278,7 @@ namespace La_Ñata.Controllers
                 return RedirectToAction("Index");
             }
         }
+
         public class ReportViewModel
         {
             public List<Expense> Expenses { get; set; }

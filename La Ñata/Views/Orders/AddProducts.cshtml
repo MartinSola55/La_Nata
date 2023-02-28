@@ -10,7 +10,7 @@
 
 <div class="d-flex align-items-end">
     <a class="btn btn-dark" href="../../Orders/Create"><i class="bi bi-arrow-left"></i></a>
-    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+    <div class="d-flex flex-grow-1 justify-content-center me-md-4">
         <h1 class="text-center">Crear pedido</h1>
     </div>
 </div>
@@ -109,7 +109,7 @@
             <div class="d-flex flex-row" style="max-width: fit-content">
                 <div class="d-flex flex-row">
                     <input class="sombra form-control py-2" id="txtSearch" placeholder="Nombre" />
-                    <button id="btnSearch" type="button" class="btn  sombra" style="background-color: #1f65a7">
+                    <button id="btnSearch" type="button" class="btn  sombra" style="background-color: #e38e00">
                         <i class="bi bi-search" style="color: white"></i>
                     </button>
                 </div>
@@ -139,15 +139,15 @@
     </div>
 
     @* Tabla carrito *@
-    <div class="col-xl-3 col-10 mx-auto">
+    <div class="col-xl-3 col-11 mx-auto">
         <div class="table100 ver1">
             <div class="table100-head">
                 <table>
                     <thead>
                         <tr class="row100 head d-flex">
-                            <th class="cell100 py-3 text-center" style="width: 40%; background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80)">Producto</th>
-                            <th class="cell100 py-3 text-center" style="width: 30%; background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80) ">Cantidad</th>
-                            <th class="cell100 py-3 text-center" style="width: 30%; background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80) ">Eliminar</th>
+                            <th class="cell100 py-3 text-center" style="width: 40%; background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Producto</th>
+                            <th class="cell100 py-3 text-center" style="width: 30%; background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk ">Cantidad</th>
+                            <th class="cell100 py-3 text-center" style="width: 30%; background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk ">Eliminar</th>
                         </tr>
                     </thead>
                 </table>
@@ -182,7 +182,7 @@
                                     @Html.HiddenFor(model => model.Order.shipment_price)
                                     @Html.HiddenFor(model => model.Order.observation)
                                     <td class="cell100 d-flex justify-content-end pe-3">
-                                        <button id="btnConfirmOrder" class="btn" style="background-color: lightgreen; color: white; text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
+                                        <button id="btnConfirmOrder" class="btn" style="background-color: lightgreen; color: rgb(80, 80, 80); text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
                                     </td>
                                 }
                             </tr>

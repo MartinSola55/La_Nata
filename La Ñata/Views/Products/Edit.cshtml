@@ -6,9 +6,33 @@
 
 <link href="~/Content/notification.css" rel="stylesheet" />
 
+@using (Html.BeginForm("Delete", "Products", FormMethod.Post))
+{
+    @Html.AntiForgeryToken();
+    @Html.HiddenFor(model => model.id)
+    <!-- Modal -->
+    <div class="modal fade" id="modalConfirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalConfirmationLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="modalConfirmationLabel">Eliminar producto</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    ¿Seguro deseas eliminar este producto?
+                </div>
+                <div class="modal-footer d-flex justify-content-between justify-content-lg-end px-3">
+                    <button type="submit" id="btnSendForm" class="btn me-lg-4" style="background-color: yellowgreen">Confirmar</button>
+                    <button type="button" class="btn" style="background-color: crimson; color: white" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="d-flex align-items-end">
     <a class="btn btn-dark" href="../../Products"><i class="bi bi-arrow-left"></i></a>
-    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+    <div class="d-flex flex-grow-1 justify-content-center me-md-4">
         <h1 class="text-center">Editar producto</h1>
     </div>
 </div>
@@ -60,11 +84,11 @@
         </div>
 
         <div class="d-flex mt-3">
-            <input type="submit" value="Guardar" class="btn flex-grow-1" style="background-color: yellowgreen; color: white" />
+            <button type="submit" class="btn flex-grow-1" style="background-color: yellowgreen; color: white">Guardar</button>
         </div>
 
         <div class="d-flex mt-5">
-            <input type="button" id="btnDelete" value="Eliminar" class="btn flex-grow-1" style="background-color: crimson; color: white" />
+            <button type="button" class="btn flex-grow-1" style="background-color: crimson; color: white" data-bs-toggle="modal" data-bs-target="#modalConfirmation">Eliminar</button>
         </div>
     }
 </div>
@@ -73,14 +97,6 @@
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/Scripts/notification.js"></script>
-
-<script>
-    const id = window.location.pathname.split("/").pop();
-    $("#btnDelete").on("click", function () {
-        $("#formProduct").attr("action", "/Products/Delete/" + id)
-        $("#formProduct").submit();
-    });
-</script>
 
 <style>
     #formContainer {

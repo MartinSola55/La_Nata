@@ -35,7 +35,7 @@
 
 <div class="d-flex align-items-end">
     <a class="btn btn-dark" href="../../Orders"><i class="bi bi-arrow-left"></i></a>
-    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+    <div class="d-flex flex-grow-1 justify-content-center me-md-4">
         <h1 class="text-center">Detalles del pedido</h1>
     </div>
 </div>
@@ -105,8 +105,8 @@
         </div>
 
         @* Botones *@
-        <div class="d-flex flex-lg-row flex-column justify-content-lg-between">
-            <div class="sombra p-4 mb-lg-5 mb-2" style="border-radius: 20px; max-width: fit-content">
+        <div class="d-flex flex-md-row flex-column justify-content-md-between">
+            <div class="sombra p-4 mb-md-5 mb-2" style="border-radius: 20px; max-width: fit-content">
                 <div class="d-flex flex-row" style="max-width: fit-content">
 
                     @* Imprimir sin precio *@
@@ -115,8 +115,8 @@
                         @Html.Hidden("id_order", Model.id);
                         @Html.Hidden("price", false);
                         <div class="sombra d-flex flex-row me-2 me-sm-5">
-                            <button type="submit" class="btn" style="background-color: #1f65a7; color: white">
-                                Detalle sin precio
+                            <button type="submit" class="btn" style="background-color: #e38e00; color: white">
+                                Detalle
                                 <i class="bi bi-printer" style="color: white"></i>
                             </button>
                         </div>
@@ -126,9 +126,10 @@
                     {
                         @Html.Hidden("id_order", Model.id);
                         @Html.Hidden("price", true);
-                        <div class="sombra d-flex flex-row me-2 me-sm-5">
-                            <button type="submit" class="btn" style="background-color: #1f65a7; color: white">
-                                Detalle con precio
+                        <div class="sombra d-flex flex-row me-2">
+                            <button type="submit" class="btn" style="background-color: #e38e00; color: white">
+                                Detalle
+                                <i class="bi bi-currency-dollar" style="color: white"></i>
                                 <i class="bi bi-printer" style="color: white"></i>
                             </button>
                         </div>
@@ -144,7 +145,7 @@
                             <i class="bi bi-pencil" style="color: black"></i>
                         </a>
                     </div>
-                    <div class="sombra d-flex flex-row ms-2 ms-sm-5">
+                    <div class="sombra d-flex flex-row ms-2 ms-md-5">
                         <button class="btn" style="background-color: crimson; color: white" data-bs-toggle="modal" data-bs-target="#modalConfirmation">
                             Eliminar
                             <i class="bi bi-x-lg" style="color: white"></i>
@@ -160,11 +161,11 @@
                 <table>
                     <thead>
                         <tr class="row100 head">
-                            <th class="text-center py-1 py-lg-3 column20" style="background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80)">Producto</th>
-                            <th class="text-center py-1 py-lg-3 column10" style="background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80)">Cantidad</th>
-                            <th class="text-center py-1 py-lg-3 column10" style="background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80)">Precio</th>
-                            <th class="text-center py-1 py-lg-3 column10" style="background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80)">Precio por rotura</th>
-                            <th class="text-center py-1 py-lg-3 column10" style="background-color: lightgreen; background-image: linear-gradient(to bottom, transparent, #5c5c5c66); color: rgb(80, 80, 80)">Precio actual</th>
+                            <th class="text-center py-1 py-lg-3 column20" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Producto</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Cantidad</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Precio</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Precio por rotura</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Precio actual</th>
                         </tr>
                     </thead>
                 </table>

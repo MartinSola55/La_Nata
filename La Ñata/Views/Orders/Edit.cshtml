@@ -66,7 +66,7 @@
 
 <div class="d-flex align-items-end">
     <a class="btn btn-dark" href="../../Orders/Details/@Model.id"><i class="bi bi-arrow-left"></i></a>
-    <div class="d-flex flex-grow-1 justify-content-center" style="margin-right: 70px">
+    <div class="d-flex flex-grow-1 justify-content-center me-md-4">
         <h1 class="text-center">Editar pedido</h1>
     </div>
 </div>
@@ -81,11 +81,11 @@
                 <table>
                     <thead>
                         <tr class="row100 head">
-                            <th class="text-center py-1 py-lg-3 column20">Producto</th>
-                            <th class="text-center py-1 py-lg-3 column10">Cantidad</th>
-                            <th class="text-center py-1 py-lg-3 column10">Precio reserva</th>
-                            <th class="text-center py-1 py-lg-3 column10">Stock restante</th>
-                            <th class="text-center py-1 py-lg-3 column10">Precio actual</th>
+                            <th class="text-center py-1 py-lg-3 column20" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Producto</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Cantidad</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Precio reserva</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Stock restante</th>
+                            <th class="text-center py-1 py-lg-3 column10" style="background-color: #e38e00; background-image: linear-gradient(to bottom, transparent, #646464ab); color: cornsilk">Precio actual</th>
                         </tr>
                     </thead>
                 </table>
@@ -105,6 +105,10 @@
                         }
                         <tr>
                             <td class="ps-xs-3 ps-2"><b>Total: $@total_amount.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tbody>
                 </table>
@@ -120,7 +124,7 @@
             <div class="d-flex flex-row" style="max-width: fit-content">
                 <div class="d-flex flex-row">
                     <input class="sombra form-control py-2" id="txtSearch" placeholder="Nombre" />
-                    <button id="btnSearch" type="button" class="sombra btn" style="background-color: #1f65a7
+                    <button id="btnSearch" type="button" class="sombra btn" style="background-color: #e38e00
 ">
                         <i class="bi bi-search" style="color: white"></i>
                     </button>

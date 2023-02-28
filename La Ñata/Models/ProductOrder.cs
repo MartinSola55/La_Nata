@@ -20,7 +20,7 @@ namespace La_Ñata.Models
         public int id_order { get; set; }
 
         [Required(ErrorMessage = "Debes ingresar una cantidad")]
-        [Range(0, 100000, ErrorMessage = "Debes ingresar una cantidad entre 0 y 100.000")]
+        [Range(0, 100000, ErrorMessage = "Debes ingresar entre 0 y 100.000 unidades")]
         public int? quantity { get; set; }
 
         [Key]

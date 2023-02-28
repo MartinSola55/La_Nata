@@ -44,8 +44,10 @@
                                         @Html.ValidationMessageFor(model => model.password, null, new { @class = "text-danger mb-4 mt-3", @id = "lblPass" })
                                     </div>
 
-                                    <input id="btnIngresar" type="submit" class="btn btn-outline-light btn-lg px-5 mt-2" value="Ingresar" />
-                                    <a class="btn btn-outline-light btn-lg px-5 mt-2" href="/Home">Volver</a>
+                                    <div class="d-flex flex-row justify-content-between mt-2">
+                                        <input id="btnIngresar" type="submit" class="btn btn-outline-light btn-lg px-4 px-sm-5" value="Ingresar" />
+                                        <a class="btn btn-outline-danger btn-lg px-4 px-sm-5" href="/Home">Volver</a>
+                                    </div>
 
                                     <div class="p-2 mt-4 errorMessage" id="errorMessage">
                                         <p class="my-auto text-center"><i class="bi bi-exclamation-triangle-fill"></i><b> Error: </b>Por favor, completa los datos requeridos</p>

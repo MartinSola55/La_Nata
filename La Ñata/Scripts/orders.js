@@ -9,7 +9,7 @@ function createTable(data) {
     let content = "";
     for (let i = 0; i < data.length; i++) {
         content += "<tr class='clickable-row row100 body' data-href='/Orders/Details/" + data[i].id + "'>";
-        content += "<td class='column10 ps-2'>" + data[i].client_name + "</td>";
+        content += "<td class='column10 ps-3'>" + data[i].client_name + "</td>";
         content += "<td class='column10 text-center pe-sm-0 pe-4'>" + (data[i].phone != null ? data[i].phone : "-") + "</td>";
         content += "<td class='column10 text-center'>" + data[i].event_adress + "</td>";
         content += "</tr>";

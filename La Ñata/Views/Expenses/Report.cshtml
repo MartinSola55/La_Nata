@@ -48,25 +48,15 @@
                     @foreach (La_Ñata.Models.Expense expense in Model.Expenses)
                     {
                         i++;
-                        if (i % 2 == 0)
-                        {
-                            <tr>
-                                <td>@expense.description</td>
-                                <td class="text-center">@expense.date.ToString("dd/MM/yyyy")</td>
-                                <td class="text-center">$@expense.price</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr style="background-color: #ecedee">
-                                <td>@expense.description</td>
-                                <td class="text-center">@expense.date.ToString("dd/MM/yyyy")</td>
-                                <td class="text-center">$@expense.price</td>
-                            </tr>
-                        }
+                        <tr  style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                            <td>@expense.description</td>
+                            <td class="text-center">@expense.date.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end">$@expense.price.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                        </tr>
                         totalExpenses += expense.price;
                     }
-                    <tr>
+                    @{ i++; }
+                    <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
                         <td></td>
                         <td></td>
                         <td class="text-end">
@@ -96,40 +86,20 @@
                         double? totalOrder = 0;
                         totalOrder = order.ProductOrder.Sum(po => (po.unit_price * po.quantity)) + (order.shipment_price ?? 0);
                         i++;
-                        if (i % 2 == 0)
-                        {
-                            <tr>
-                                <td>@order.client_name</td>
-                                <td>@order.event_adress</td>
-                                <td class="text-center">@order.date.ToString("dd/MM/yyyy")</td>
-                                @if (order.shipment_price != null)
-                                {
-                                    <td class="text-center">$@order.shipment_price</td>
-                                }
-                                else
-                                {
-                                    <td class="text-center">-</td>
-                                }
-                                <td class="text-center">$@totalOrder</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr style="background-color: #ecedee">
-                                <td>@order.client_name</td>
-                                <td>@order.event_adress</td>
-                                <td class="text-center">@order.date.ToString("dd/MM/yyyy")</td>
-                                @if (order.shipment_price != null)
-                                {
-                                    <td class="text-center">$@order.shipment_price</td>
-                                }
-                                else
-                                {
-                                    <td class="text-center">-</td>
-                                }
-                                <td class="text-center">$@totalOrder</td>
-                            </tr>
-                        }
+                        <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                            <td>@order.client_name</td>
+                            <td>@order.event_adress</td>
+                            <td class="text-center">@order.date.ToString("dd/MM/yyyy")</td>
+                            @if (order.shipment_price != null)
+                            {
+                                <td class="text-end">$@order.shipment_price.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            }
+                            else
+                            {
+                                <td class="text-center">-</td>
+                            }
+                            <td class="text-end">$@totalOrder.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                        </tr>
                         totalIncome += totalOrder.Value;
                     }
                     <tr>

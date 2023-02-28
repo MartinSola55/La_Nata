@@ -60,20 +60,10 @@
                     @foreach (La_Ñata.Controllers.OrdersController.ReportViewModel product in Model)
                     {
                         i++;
-                        if (i % 2 == 0)
-                        {
-                            <tr>
-                                <td>@product.Description</td>
-                                <td class="text-center">@product.Quantity</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr style="background-color: #ecedee">
-                                <td>@product.Description</td>
-                                <td class="text-center">@product.Quantity</td>
-                            </tr>
-                        }
+                        <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                            <td>@product.Description</td>
+                            <td class="text-center">@product.Quantity</td>
+                        </tr>
                     }
                 </tbody>
             </table>

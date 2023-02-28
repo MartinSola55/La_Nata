@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Mvc;
 using La_Ñata.Models;
@@ -14,6 +16,11 @@ namespace La_Ñata.Controllers
     public class ProductsController : Controller
     {
         private EFModel db = new EFModel();
+        private string ToUpperFirst(string title)
+        {
+            title = Regex.Replace(title, @"[^A-Za-zñáéíóúÁÉÍÓÚÑÜü'. ]", string.Empty);
+            return title.ToUpper()[0] + title.ToLower().Substring(1);
+        }
 
         // GET: Products
         public ActionResult Index()
@@ -57,13 +64,23 @@ namespace La_Ñata.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    product.created_at = DateTime.UtcNow.AddHours(-3);
-                    db.Product.Add(product);
-                    db.SaveChanges();
+                    Product repeted_prod = db.Product.Where(p => p.description.Equals(product.description)).FirstOrDefault();
+                    if (repeted_prod == null)
+                    {
+                        product.description = ToUpperFirst(product.description);
+                        product.created_at = DateTime.UtcNow.AddHours(-3);
+                        db.Product.Add(product);
+                        db.SaveChanges();
 
-                    TempData["Message"] = "El producto se creó correctamente";
+                        TempData["Message"] = "El producto se creó correctamente";
 
-                    return RedirectToAction("Index");
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Ya existe un producto con la misma descripción";
+                        ViewBag.Error = 1;
+                    }
                 }
                 else
                 {
@@ -89,15 +106,17 @@ namespace La_Ñata.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    TempData["Message"] = "El producto que deseas editar no existe";
+                    TempData["Error"] = 1;
+                    return RedirectToAction("Index");
                 }
 
-                Product product = db.Product.Find(id);
+                Product product = db.Product.Where(p => p.id.Equals(id.Value) && p.deleted_at.Equals(null)).FirstOrDefault();
                 if (product == null)
                 {
-                    ViewBag.Message = "Ha ocurrido un error. No se ha encontrado el producto";
-                    ViewBag.Error = 1;
-                    product = new Product();
+                    TempData["Message"] = "El producto que deseas editar no existe";
+                    TempData["Error"] = 1;
+                    return RedirectToAction("Index");
                 }
                 return View(product);
             }
@@ -120,14 +139,23 @@ namespace La_Ñata.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    Product product = db.Product.Find(product_edited.id);
-                    product.description = product_edited.description;
-                    product.stock = product_edited.stock;
-                    product.price = product_edited.price;
-                    product.break_price = product_edited.break_price;
-                    db.SaveChanges();
-                    TempData["Message"] = "El producto se guardó correctamente";
-                    return RedirectToAction("Index");
+                    Product repeted_prod = db.Product.Where(p => p.description.Equals(product_edited.description) && !p.id.Equals(product_edited.id)).FirstOrDefault();
+                    if (repeted_prod == null)
+                    {
+                        Product product = db.Product.Find(product_edited.id);
+                        product.description = ToUpperFirst(product_edited.description);
+                        product.stock = product_edited.stock;
+                        product.price = product_edited.price;
+                        product.break_price = product_edited.break_price;
+                        db.SaveChanges();
+                        TempData["Message"] = "El producto se guardó correctamente";
+                        return RedirectToAction("Index");
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Ya existe un producto con la misma descripción";
+                        ViewBag.Error = 1;
+                    }
                 }
                 else
                 {
@@ -147,16 +175,16 @@ namespace La_Ñata.Controllers
         // POST: Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int expense_id)
+        public ActionResult DeleteConfirmed(int id)
         {
             try
             {
-                Product product = db.Product.Find(expense_id);
+                Product product = db.Product.Find(id);
                 if (product != null)
                 {
                     product.deleted_at = DateTime.UtcNow.AddHours(-3);
                     db.SaveChanges();
-                    TempData["Message"] = "El producto fue eliminado";
+                    TempData["Message"] = "El producto fue eliminado correctamente";
                     return RedirectToAction("Index");
                 }
                 else

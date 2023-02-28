@@ -14,7 +14,7 @@
     <header>
         <nav class="navbar navbar-expand-custom navbar-mainbg py-3">
             <a class="navbar-brand navbar-logo" href="/Home">
-                <img src="~/Content/Images/logo.png" alt="Logo" style="max-width: 300px; max-height: 40px">
+                <img src="~/Content/Images/logo.png" alt="Logo" class="imgShadow" style="max-width: 300px; max-height: 40px;">
             </a>
             <div id="navbtn">
                 <button class="navbar-toggler mb-0" style="border: none; color: transparent" type="button" aria-controls="navbarContainer" aria-expanded="false" aria-label="Cerrar navegación">
@@ -62,3 +62,10 @@
 
 </body>
 </html>
+
+<style>
+    .imgShadow {
+        -webkit-filter: drop-shadow(0 0 10px #fff);
+        filter: drop-shadow(0 0 8px #fff);
+    }
+</style>

@@ -56,6 +56,7 @@
                         <td class="text-center" style="font-weight:600">Producto</td>
                         <td class="text-center" style="font-weight:600">Cantidad</td>
                         <td class="text-center" style="font-weight:600">Precio unitario</td>
+                        <td class="text-center" style="font-weight:600">Precio por rotura</td>
                         <td class="text-center" style="font-weight:600">Total</td>
                     </tr>
                 </thead>
@@ -63,49 +64,30 @@
                     @foreach (La_Ñata.Controllers.OrdersController.ReportViewModel product in Model)
                     {
                         i++;
-                        if (i % 2 == 0)
-                        {
-                            <tr>
-                                <td>@product.Description</td>
-                                <td class="text-center">@product.Quantity</td>
-                                <td class="text-center">$@product.UnitPrice</td>
-                                <td class="text-center">$@product.BreakPrice</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr style="background-color: #ecedee">
-                                <td>@product.Description</td>
-                                <td class="text-center">@product.Quantity</td>
-                                <td class="text-center">$@product.UnitPrice</td>
-                                <td class="text-center">$@product.BreakPrice</td>
-                            </tr>
-                        }
+                        <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                            <td>@product.Description</td>
+                            <td class="text-center">@product.Quantity</td>
+                            <td class="text-center">$@product.UnitPrice.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-center">$@product.BreakPrice.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-end">$@((product.UnitPrice * product.Quantity).ToString("N", new System.Globalization.CultureInfo("is-IS")))</td>
+                        </tr>
                         total += product.Quantity * product.UnitPrice;
                     }
                     @if (Model.First().ShipmentPrice != null)
                     {
-                        if (i % 2 == 0)
-                        {
-                            <tr>
-                                <td>Flete</td>
-                                <td class="text-center">1</td>
-                                <td class="text-center">$@Model.First().ShipmentPrice</td>
-                                <td class="text-center">-</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            <tr style="background-color: #ecedee">
-                                <td>Flete</td>
-                                <td class="text-center">1</td>
-                                <td class="text-center">$@Model.First().ShipmentPrice</td>
-                                <td class="text-center">-</td>
-                            </tr>
-                        }
+                        i++;
+                        <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                            <td>Flete</td>
+                            <td class="text-center">1</td>
+                            <td class="text-center">$@Model.First().ShipmentPrice.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-center">-</td>
+                            <td class="text-center">$@Model.First().ShipmentPrice.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                        </tr>
                         total += Model.First().ShipmentPrice.Value;
                     }
-                    <tr>
+                    @{ i++; }
+                    <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

@@ -38,7 +38,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="modalExpenseDeleteLabel">Eliminar orden</h1>
+                    <h1 class="modal-title fs-5" id="modalExpenseDeleteLabel">Eliminar gasto</h1>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
@@ -106,7 +106,7 @@
             @* Botones *@
             <div class="d-flex flex-row ms-md-4 mt-md-0 mt-4 justify-content-between">
                 <div class="sombra d-flex flex-row me-4 me-sm-5">
-                    <button type="button" id="btnAdd" class="btn text-white" style="background-color: #1f65a7" onclick='openModal()' data-bs-toggle='modal' data-bs-target='#modalExpense'>
+                    <button type="button" id="btnAdd" class="btn text-white" style="background-color: #e38e00" onclick='openModal()' data-bs-toggle='modal' data-bs-target='#modalExpense'>
                         <i class="bi bi-plus-circle"></i>
                     </button>
                 </div>
@@ -114,7 +114,7 @@
                 {
                     @Html.Hidden("dates_range");
                     <div class="sombra d-flex flex-row">
-                        <button id="printReport" class="btn" type="button" style="background-color: #1f65a7; color: white">
+                        <button id="printReport" class="btn" type="button" style="background-color: #e38e00; color: white">
                             Imprimir constancia
                             <i class="bi bi-printer" style="color: white"></i>
                         </button>

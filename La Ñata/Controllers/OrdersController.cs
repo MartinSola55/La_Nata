@@ -14,12 +14,30 @@ using System.Data.SqlClient;
 using System.Data.Entity.Infrastructure;
 using Rotativa;
 using System.Web.Script.Serialization;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace La_Ñata.Controllers
 {
     public class OrdersController : Controller
     {
         private EFModel db = new EFModel();
+        private string ToTitleCase(string title)
+        {
+            title = Regex.Replace(title, @"[^A-Za-zñáéíóúÁÉÍÓÚÑÜü'. ]", string.Empty);
+            return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
+        }
+        private string ToUpperFirst(string title)
+        {
+            title = Regex.Replace(title, @"[^0-9A-Za-zñáéíóúÁÉÍÓÚÑÜü'. ]", string.Empty);
+            string qsy = title.ToUpper()[0] + title.ToLower().Substring(1);
+            return title.ToUpper()[0] + title.ToLower().Substring(1);
+        }
+        private string ToNumber(string numero)
+        {
+            numero = Regex.Replace(numero, @"[^0-9]", string.Empty);
+            return numero;
+        }
 
         // GET: Orders
         [Security]
@@ -56,12 +74,16 @@ namespace La_Ñata.Controllers
             {
                 if (id == null)
                 {
-                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                    TempData["Message"] = "Debes seleccionar un pedido para ver los detalles";
+                    TempData["Error"] = 1;
+                    return RedirectToAction("Index");
                 }
-                Order order = db.Order.Where(o => o.id.Equals(id.Value) && o.deleted_at.Equals(null)).First();
+                Order order = db.Order.Where(o => o.id.Equals(id.Value) && o.deleted_at.Equals(null)).FirstOrDefault();
                 if (order == null)
                 {
-                    return HttpNotFound();
+                    TempData["Message"] = "El pedido que deseas ver no existe";
+                    TempData["Error"] = 1;
+                    return RedirectToAction("Index");
                 }
                 if (TempData.Count == 1)
                 {
@@ -95,12 +117,16 @@ namespace La_Ñata.Controllers
         {
             if (id == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                TempData["Message"] = "Debes seleccionar un pedido para editar";
+                TempData["Error"] = 1;
+                return RedirectToAction("Index");
             }
-            Order order = db.Order.Where(o => o.id.Equals(id.Value) && o.deleted_at.Equals(null)).First();
+            Order order = db.Order.Where(o => o.id.Equals(id.Value) && o.deleted_at.Equals(null)).FirstOrDefault();
             if (order == null)
             {
-                return HttpNotFound();
+                TempData["Message"] = "El pedido que deseas editar no existe";
+                TempData["Error"] = 1;
+                return RedirectToAction("Index");
             }
 
             if (TempData.Count == 1)
@@ -216,6 +242,9 @@ namespace La_Ñata.Controllers
         {
             if (ModelState.IsValid)
             {
+                order.client_name = ToTitleCase(order.client_name);
+                order.event_adress = ToUpperFirst(order.event_adress);
+                order.phone = order.phone ==  null ? null : ToNumber(order.phone);
                 return View(new ProductOrder { Order = order });
             }
             return RedirectToAction("Create");
@@ -322,38 +351,47 @@ namespace La_Ñata.Controllers
         {
             try
             {
-                if (Session["Products"] != null)
+                if (ModelState.IsValid)
                 {
-                    List<ProductOrder> products = Session["Products"] as List<ProductOrder>;
-
-                    order.created_at = DateTime.UtcNow.AddHours(-3);
-
-                    using (var transaccion = new TransactionScope())
+                    if (Session["Products"] != null)
                     {
-                        db.Order.Add(order);
-                        db.SaveChanges();
-                        foreach (ProductOrder item in products)
-                        {
-                            ProductOrder prod_order = new ProductOrder
-                            {
-                                id_product = item.Product.id,
-                                id_order = order.id,
-                                quantity = item.quantity,
-                                unit_price = item.unit_price,
-                            };
+                        List<ProductOrder> products = Session["Products"] as List<ProductOrder>;
 
-                            db.ProductOrder.Add(prod_order);
+                        order.created_at = DateTime.UtcNow.AddHours(-3);
+                        order.observation = order.observation == null ? null : ToUpperFirst(order.observation);
+
+                        using (var transaccion = new TransactionScope())
+                        {
+                            db.Order.Add(order);
+                            db.SaveChanges();
+                            foreach (ProductOrder item in products)
+                            {
+                                ProductOrder prod_order = new ProductOrder
+                                {
+                                    id_product = item.Product.id,
+                                    id_order = order.id,
+                                    quantity = item.quantity,
+                                    unit_price = item.unit_price,
+                                };
+
+                                db.ProductOrder.Add(prod_order);
+                            }
+                            db.SaveChanges();
+                            transaccion.Complete();
                         }
-                        db.SaveChanges();
-                        transaccion.Complete();
+                        Session["Products"] = null;
+                        TempData["Message"] = "El pedido se ha creado exitosamente";
                     }
-                    Session["Products"] = null;
-                    TempData["Message"] = "La orden se ha creado exitosamente";
+                }
+                else
+                {
+                    TempData["Message"] = "El pedido no ha podido ser creado";
+                    TempData["Error"] = 1;
                 }
             }
             catch (Exception)
             {
-                TempData["Message"] = "Ha ocurrido un error. La orden no pudo ser creada";
+                TempData["Message"] = "Ha ocurrido un error. El pedido no pudo ser creado";
                 TempData["Error"] = "2";
             }
             return RedirectToAction("Index");
