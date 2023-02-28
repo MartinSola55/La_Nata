@@ -3,6 +3,18 @@
     int i = 0;
     double totalIncome = 0;
     double totalExpenses = 0;
+    double profit = 0;
+
+    foreach (La_Ñata.Models.Expense expense in Model.Item1)
+    {
+        profit -= expense.price;
+    }
+    foreach (La_Ñata.Models.Order order in Model.Item2)
+    {
+        double? subtotal = 0;
+        subtotal = order.ProductOrder.Sum(po => (po.unit_price * po.quantity)) + (order.shipment_price ?? 0);
+        profit += subtotal.Value;
+    }
 }
 @model Tuple<List<La_Ñata.Models.Expense>, List<La_Ñata.Models.Order>, List<DateTime>>
 
@@ -26,7 +38,8 @@
                     <tr class="d-flex w-100" style="border: none">
                         <td style="border: none"><img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 300px; max-height: 100px;"></td>
                         <td class="w-100 text-end align-self-end" style="border: none">
-                            <p class="align-self-end mb-0">Reporte de gastos e ingresos entre <b>@Model.Item3.First().ToString("dd/MM/yyyy")</b> y <b>@Model.Item3.Last().ToString("dd/MM/yyyy")</b></p>
+                            <p class="align-self-end mb-0">Detalle de gastos e ingresos entre <b>@Model.Item3.First().ToString("dd/MM/yyyy")</b> y <b>@Model.Item3.Last().ToString("dd/MM/yyyy")</b><br /></p>
+                            <b class="align-self-end mb-0">Ganancias: $@profit.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b>
                         </td>
                     </tr>
                 </tbody>
@@ -77,7 +90,7 @@
                         <td class="text-center" style="font-weight:600">Dirección</td>
                         <td class="text-center" style="font-weight:600">Fecha</td>
                         <td class="text-center" style="font-weight:600">Flete</td>
-                        <td class="text-center" style="font-weight:600">Total</td>
+                        <td class="text-center" style="font-weight:600">Monto</td>
                     </tr>
                 </thead>
                 <tbody>

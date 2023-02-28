@@ -85,7 +85,7 @@
                         }
                         else
                         {
-                            @Html.TextBox("shipment_price", Model.shipment_price, new { @class = "form-control py-2", @readonly = "readonly" })
+                            @Html.TextBox("shipment_price", "$" + Model.shipment_price, new { @class = "form-control py-2", @readonly = "readonly" })
                         }
                     </div>
 
