@@ -12,10 +12,10 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using La_Ñata.Models;
-using Rotativa;
 
 namespace La_Ñata.Controllers
 {
+    [Security]
     public class ExpensesController : Controller
     {
         private EFModel db = new EFModel();
@@ -25,7 +25,6 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Expenses
-        [Security]
         public ActionResult Index()
         {
             try
@@ -52,7 +51,6 @@ namespace La_Ñata.Controllers
         // POST: Expenses/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "date,description,price")] Expense expense)
@@ -83,7 +81,6 @@ namespace La_Ñata.Controllers
         // POST: Expenses/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [Security]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "id,date,description,price")] Expense expense_edited)
@@ -116,7 +113,6 @@ namespace La_Ñata.Controllers
         }
 
         // POST: Expenses/Delete/5
-        [Security]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int expense_id)
@@ -146,7 +142,6 @@ namespace La_Ñata.Controllers
             }
         }
 
-        [Security]
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -157,7 +152,6 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Expenses by date
-        [Security]
         [HttpGet]
         public JsonResult ExpensesByDate(string dates)
         {
@@ -187,7 +181,6 @@ namespace La_Ñata.Controllers
         }
 
         // GET: Get one Expense
-        [Security]
         [HttpGet]
         public JsonResult GetOne(int id)
         {
@@ -209,67 +202,42 @@ namespace La_Ñata.Controllers
                 return Json(null, JsonRequestBehavior.AllowGet);
             }
         }
-        
-        public ActionResult Report(string json)
+
+        // GET: Report between two dates
+        [HttpGet]
+        public ActionResult Report(Tuple<List<Expense>, List<Order>, List<DateTime>> model)
         {
-            try
-            {
-                ReportViewModel model = new JavaScriptSerializer().Deserialize<ReportViewModel>(json);
-                List<Order> orders = new List<Order>();
-                foreach (int order_id in model.IDOrders)
-                {
-                    Order order = db.Order.Find(order_id);
-                    orders.Add(order);
-                }
-                
-                model.Orders = orders;
-                return View(model);
-            }
-            catch (Exception)
-            {
-                TempData["Message"] = "Ha ocurrido un error inesperado. No se ha podido generar el reporte";
-                TempData["Error"] = 2;
-                return RedirectToAction("Index");
-            }
+            return View(model);
         }
 
         // GET: Print report
-        [Security]
         [HttpGet]
         public ActionResult Print(string dates_range)
         {
             try
             {
-                ReportViewModel model = new ReportViewModel();
-
                 string[] dates_formated = dates_range.Trim().Split(',');
                 DateTime date_from = Convert.ToDateTime(dates_formated[0]);
                 DateTime date_to = Convert.ToDateTime(dates_formated[1]);
+                List<DateTime> dates = new List<DateTime>
+                {
+                    date_from,
+                    date_to
+                };
 
                 List<Expense> expenses = db.Expense
                     .Where(e => e.date >= date_from && e.date <= date_to && e.deleted_at.Equals(null))
                     .OrderByDescending(e => e.date).ThenByDescending(e => e.price)
                     .ToList();
 
-                List<int> orders = db.Order
+                List<Order> orders = db.Order
                     .Where(o => o.date >= date_from && o.date <= date_to && o.deleted_at.Equals(null))
                     .OrderByDescending(o => o.date).ThenByDescending(o => o.ProductOrder.Sum(po => (po.unit_price * po.quantity.Value)) + (o.shipment_price ?? 0))
-                    .Select(o => o.id)
                     .ToList();
 
-                model.Expenses = expenses;
-                model.IDOrders = orders;
-                model.DateFrom = date_from;
-                model.DateTo = date_to;
+                Tuple<List<Expense>, List<Order>, List<DateTime>> model = new Tuple<List<Expense>, List<Order>, List<DateTime>>(expenses, orders, dates);
 
-
-                var json = new JavaScriptSerializer().Serialize(model);
-
-                var report = new ActionAsPdf("Report", new { json })
-                {
-                    FileName = "Reporte balance " + model.DateFrom.ToString("dd-MM-yyyy") + " al " + model.DateTo.ToString("dd-MM-yyyy") + ".pdf",
-                };
-                return report;
+                return View("Report", model);
             }
             catch (Exception)
             {
@@ -277,15 +245,6 @@ namespace La_Ñata.Controllers
                 TempData["Error"] = 2;
                 return RedirectToAction("Index");
             }
-        }
-
-        public class ReportViewModel
-        {
-            public List<Expense> Expenses { get; set; }
-            public List<int> IDOrders { get; set; }
-            public List<Order> Orders { get; set; }
-            public DateTime DateFrom { get; set; }
-            public DateTime DateTo { get; set; }
         }
     }
 }

@@ -15,15 +15,7 @@ $(document).ready(function () {
     $.get("../../Expenses/ExpensesByDate/?dates=" + dates, function (data) {
         createTable(data);
     })
-});
-
-$("#printReport").on("click", function (e) {
-    e.preventDefault();
-    let date_from = $("#datepicker").data('daterangepicker').startDate.format('YYYY-MM-DD');
-    let date_to = $("#datepicker").data('daterangepicker').endDate.format('YYYY-MM-DD');
-    let dates = [date_from, date_to];
-    $("#dates_range").val(dates);
-    $("#formReport").submit();
+    $("#printReport").attr("href", "../../Expenses/Print/?dates_range=" + dates);
 });
 
 $("#datepicker").on("apply.daterangepicker", function (ev, picker) {
@@ -33,6 +25,7 @@ $("#datepicker").on("apply.daterangepicker", function (ev, picker) {
     $.get("../../Expenses/ExpensesByDate/?dates=" + dates, function (data) {
         createTable(data);
     })
+    $("#printReport").attr("href", "../../Expenses/Print/?dates_range=" + dates);
 });
 
 function createTable(data) {

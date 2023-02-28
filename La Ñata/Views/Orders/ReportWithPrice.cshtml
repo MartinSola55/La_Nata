@@ -3,7 +3,7 @@
     int i = 0;
     double total = 0;
 }
-@model IEnumerable<La_Ñata.Controllers.OrdersController.ReportViewModel>
+@model La_Ñata.Models.Order
 
 <!DOCTYPE html>
 <html>
@@ -20,31 +20,28 @@
 {
     <body class="container mt-5" style="font-family: 'Open Sans', sans-serif;">
         <div class="container">
-            <table class="d-flex mb-3" style="border: none">
-                <tbody style="border: none">
-                    <tr style="border: none">
-                        <td style="border: none; width: 30%">
-                            <img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 400px; max-height: 100px;">
-                            <p class="my-3" style="font-family: 'Roboto', sans-serif; font-style: italic; font-weight: 700">Alquiler de sillas, mesas, vajillas y mantelería</p>
-                            <p class="mb-0" style="font-family: 'Roboto', sans-serif; font-style:normal">
-                                <b>Cliente:</b> @Model.First().ClientName <br />
-                                <b>Fecha:</b> @Model.First().Date.ToString("dd/MM/yyyy")<br />
-                                <b>Lugar:</b> @Model.First().EventAdress
-                            </p>
-                        </td>
-                        <td style="border: none; width: 30%"></td>
-                        <td class="text-end d-flex justify-content-end align-items-end" style="border: none; width: 40%">
-                            <div class="p-3 mb-2" style="background-color: #c9c9c9; border-radius: 3px">
-                                <p class="text-center mb-0 fw-bold fst-italic"> COMPROBANTE DE ENTREGA <br />PARA ALQUILER DE ENSERES</p>
-                            </div>
-                            <p class="mb-0 text-center" style="font-family: 'Roboto', sans-serif; font-style:normal; font-weight: 700">
-                                13 de Mayo - Tel: 03404-420949 / 15458425<br />
-                                3013 - San Carlos Centro - Santa Fe
-                            </p>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+
+            @* Header *@
+            <div class="d-flex flex-row justify-content-between mb-3">
+                <div>
+                    <img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 400px; max-height: 100px;">
+                    <p class="my-3" style="font-family: 'Roboto', sans-serif; font-style: italic; font-weight: 700">Alquiler de sillas, mesas,<br />vajillas y mantelería</p>
+                    <p class="mb-0" style="font-family: 'Roboto', sans-serif; font-style:normal">
+                        <b>Cliente:</b> @Model.client_name <br />
+                        <b>Fecha:</b> @Model.date.ToString("dd/MM/yyyy") <br />
+                        <b>Lugar:</b> @Model.event_adress
+                    </p>
+                </div>
+                <div>
+                    <div class="p-3 mb-2 text-center" style="background-color: #c9c9c9; border-radius: 3px; print-color-adjust: exact;">
+                        <p class="text-center mb-0 fw-bold fst-italic"> COMPROBANTE DE ENTREGA <br />PARA ALQUILER DE ENSERES</p>
+                    </div>
+                    <p class="mb-0 text-center" style="font-family: 'Roboto', sans-serif; font-style:normal; font-weight: 700">
+                        13 de Mayo - Tel: 03404-420949 / 15458425<br />
+                        3013 - San Carlos Centro - Santa Fe
+                    </p>
+                </div>
+            </div>
 
             @* Detalle *@
             <h1 class="text-start mt-5">DETALLE</h1>
@@ -61,29 +58,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (La_Ñata.Controllers.OrdersController.ReportViewModel product in Model)
+                    @foreach (La_Ñata.Models.ProductOrder product in Model.ProductOrder)
                     {
                         i++;
                         <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
-                            <td>@product.Description</td>
-                            <td class="text-center">@product.Quantity</td>
-                            <td class="text-center">$@product.UnitPrice.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
-                            <td class="text-center">$@product.BreakPrice.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
-                            <td class="text-end">$@((product.UnitPrice * product.Quantity).ToString("N", new System.Globalization.CultureInfo("is-IS")))</td>
+                            <td>@product.Product.description</td>
+                            <td class="text-center">@product.quantity.Value</td>
+                            <td class="text-end">$@product.unit_price.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-end">$@product.Product.break_price.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-end">$@((product.unit_price * product.quantity.Value).ToString("N", new System.Globalization.CultureInfo("is-IS")))</td>
                         </tr>
-                        total += product.Quantity * product.UnitPrice;
+                        total += product.quantity.Value * product.unit_price;
                     }
-                    @if (Model.First().ShipmentPrice != null)
+                    @if (Model.shipment_price != null)
                     {
                         i++;
                         <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
                             <td>Flete</td>
                             <td class="text-center">1</td>
-                            <td class="text-center">$@Model.First().ShipmentPrice.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-end">$@Model.shipment_price.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
                             <td class="text-center">-</td>
-                            <td class="text-center">$@Model.First().ShipmentPrice.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
+                            <td class="text-end">$@Model.shipment_price.Value.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
                         </tr>
-                        total += Model.First().ShipmentPrice.Value;
+                        total += Model.shipment_price.Value;
                     }
                     @{ i++; }
                     <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">

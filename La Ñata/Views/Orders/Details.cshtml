@@ -110,30 +110,20 @@
                 <div class="d-flex flex-row" style="max-width: fit-content">
 
                     @* Imprimir sin precio *@
-                    @using (Html.BeginForm("Print", "Orders", FormMethod.Get))
-                    {
-                        @Html.Hidden("id_order", Model.id);
-                        @Html.Hidden("price", false);
-                        <div class="sombra d-flex flex-row me-2 me-sm-5">
-                            <button type="submit" class="btn" style="background-color: #e38e00; color: white">
-                                Detalle
-                                <i class="bi bi-printer" style="color: white"></i>
-                            </button>
-                        </div>
-                    }
+                    <div class="sombra d-flex flex-row me-2 me-sm-5">
+                        <a class="btn" target="_blank" href="../../Orders/Print/?id_order=@Model.id&price=false" style="background-color: #e38e00; color: white">
+                            Detalle
+                            <i class="bi bi-printer" style="color: white"></i>
+                        </a>
+                    </div>
                     @* Imprimir con precio *@
-                    @using (Html.BeginForm("Print", "Orders", FormMethod.Get))
-                    {
-                        @Html.Hidden("id_order", Model.id);
-                        @Html.Hidden("price", true);
-                        <div class="sombra d-flex flex-row me-2">
-                            <button type="submit" class="btn" style="background-color: #e38e00; color: white">
-                                Detalle
-                                <i class="bi bi-currency-dollar" style="color: white"></i>
-                                <i class="bi bi-printer" style="color: white"></i>
-                            </button>
-                        </div>
-                    }
+                    <div class="sombra d-flex flex-row me-2">
+                        <a  class="btn" target="_blank" href="../../Orders/Print/?id_order=@Model.id&price=true" style="background-color: #e38e00; color: white">
+                            Detalle
+                            <i class="bi bi-currency-dollar" style="color: white"></i>
+                            <i class="bi bi-printer" style="color: white"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
