@@ -18,7 +18,7 @@ namespace La_Ñata.Controllers
         private EFModel db = new EFModel();
         private string ToUpperFirst(string title)
         {
-            title = Regex.Replace(title, @"[^A-Za-zñáéíóúÁÉÍÓÚÑÜü'. ]", string.Empty);
+            title = Regex.Replace(title, @"[^0-9a-zA-Z\u00C0-\u017F\s']", string.Empty);
             return title.ToUpper()[0] + title.ToLower().Substring(1);
         }
 

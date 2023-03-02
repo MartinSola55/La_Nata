@@ -24,12 +24,12 @@ namespace La_Ñata.Controllers
         private EFModel db = new EFModel();
         private string ToTitleCase(string title)
         {
-            title = Regex.Replace(title, @"[^A-Za-zñáéíóúÁÉÍÓÚÑÜü'. ]", string.Empty);
+            title = Regex.Replace(title, @"[^a-zA-Z\u00C0-\u017F\s']", string.Empty);
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(title.ToLower());
         }
         private string ToUpperFirst(string title)
         {
-            title = Regex.Replace(title, @"[^0-9A-Za-zñáéíóúÁÉÍÓÚÑÜü'. ]", string.Empty);
+            title = Regex.Replace(title, @"[^0-9a-zA-Z\u00C0-\u017F\s']", string.Empty);
             string qsy = title.ToUpper()[0] + title.ToLower().Substring(1);
             return title.ToUpper()[0] + title.ToLower().Substring(1);
         }

@@ -18,7 +18,7 @@ namespace La_Ñata.Models
         public int id { get; set; }
 
         [Required(ErrorMessage = "Debes completar con una descripción")]
-        [RegularExpression(@"^[a-zA-Z\u00C0-\u017F\s']+$", ErrorMessage = "Ingrese una descripción válida")]
+        [RegularExpression(@"^[0-9a-zA-Z\u00C0-\u017F\s']+$", ErrorMessage = "Ingrese una descripción válida")]
         [StringLength(255, ErrorMessage = "Debes agregar una descripción de menos de 255 caracteres")]
         public string description { get; set; }
 
