@@ -42,19 +42,19 @@
 
         <div class="mb-2">
             @Html.LabelFor(model => model.stock, "Stock", htmlAttributes: new { @class = "control-label required" })
-            @Html.TextBoxFor(model => model.stock, new { @class = "form-control", @type = "number" })
+            @Html.TextBoxFor(model => model.stock, new { @class = "form-control", @type = "number", @data_val_number = "Por favor, escriba solamente números" })
             @Html.ValidationMessageFor(model => model.stock, "", new { @class = "text-danger mb-4 mt-3" })
         </div>
 
         <div class="mb-2">
             @Html.LabelFor(model => model.price, "Precio", htmlAttributes: new { @class = "control-label required" })
-            @Html.TextBoxFor(model => model.price, new { @class = "form-control", @type = "number", @placeholder = "$", @step = "0.01" })
+            @Html.TextBoxFor(model => model.price, new { @class = "form-control", @type = "number", @placeholder = "$", @step = "0.01", @data_val_number = "Por favor, escriba solamente números" })
             @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger mb-4 mt-3" })
         </div>
 
         <div class="mb-2">
             @Html.LabelFor(model => model.break_price, "Precio por rotura", htmlAttributes: new { @class = "control-label required" })
-            @Html.TextBoxFor(model => model.break_price, new { @class = "form-control", @type = "number", @placeholder = "$", @step = "0.01" })
+            @Html.TextBoxFor(model => model.break_price, new { @class = "form-control", @type = "number", @placeholder = "$", @step = "0.01", @data_val_number = "Por favor, escriba solamente números" })
             @Html.ValidationMessageFor(model => model.break_price, "", new { @class = "text-danger mb-4 mt-3" })
         </div>
 

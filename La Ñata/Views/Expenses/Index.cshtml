@@ -70,12 +70,12 @@
                 <div class="modal-body d-flex flex-column mx-auto">
                     <div class="d-flex flex-column">
                         <label for="date" class="required">Fecha</label>
-                        @Html.TextBoxFor(model => model.date, null, new { @class = "form-control cleanField" })
+                        @Html.TextBoxFor(model => model.date, null, new { @class = "form-control cleanField", @readonly = "readonly" })
                         @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger" })
                     </div>
                     <div class="d-flex flex-column mt-2">
                         <label for="price" class="required">Precio</label>
-                        @Html.TextBoxFor(model => model.price, null, new { @class = "form-control cleanField", @type = "number" })
+                        @Html.TextBoxFor(model => model.price, null, new { @class = "form-control cleanField", @type = "number", @data_val_number = "Por favor, escriba solamente números" })
                         @Html.ValidationMessageFor(model => model.price, "", new { @class = "text-danger" })
                     </div>
                     <div class="d-flex flex-column mt-2">

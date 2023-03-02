@@ -35,6 +35,7 @@ namespace La_Ñata.Models
         public DateTime date { get; set; }
 
         [Range(0, 1000000, ErrorMessage = "Debes agregar un flete mayor a $0")]
+        [RegularExpression(@"^[0-9]+$", ErrorMessage = "Por favor, escriba solamente números")]
         public double? shipment_price { get; set; }
 
         [StringLength(500, ErrorMessage = "Debes agregar una observación de menos de 500 caracteres")]

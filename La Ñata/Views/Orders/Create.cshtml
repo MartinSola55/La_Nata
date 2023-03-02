@@ -41,7 +41,7 @@
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div>
             @Html.LabelFor(model => model.date, "Fecha", new { @class = "required" })
-            @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control", @id = "datepicker" } })
+            @Html.EditorFor(model => model.date, new { htmlAttributes = new { @class = "form-control", @id = "datepicker", @readonly = "readonly" } })
             @Html.ValidationMessageFor(model => model.date, "", new { @class = "text-danger mb-4 mt-3" })
         </div>
 
@@ -65,7 +65,7 @@
 
         <div class="mt-2">
             @Html.LabelFor(model => model.shipment_price, "Precio flete")
-            @Html.EditorFor(model => model.shipment_price, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @step = "0.01", @placeholder = "$" } })
+            @Html.EditorFor(model => model.shipment_price, new { htmlAttributes = new { @class = "form-control", @type = "number", @min = "0", @step = "0.01", @placeholder = "$", @data_val_number = "Por favor, escriba solamente números" } })
             @Html.ValidationMessageFor(model => model.shipment_price, "", new { @class = "text-danger mb-4 mt-3" })
         </div>
 
