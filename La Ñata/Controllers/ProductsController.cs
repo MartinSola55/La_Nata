@@ -257,7 +257,7 @@ namespace La_Ñata.Controllers
                             p.price,
                             p.break_price,
                             stock = p.stock - (p.ProductOrder
-                            .Where(po => DbFunctions.TruncateTime(po.Order.date).ToString().Contains(date_formatted) && po.id_product.Equals(p.id))
+                            .Where(po => DbFunctions.TruncateTime(po.Order.date).ToString().Contains(date_formatted) && po.id_product.Equals(p.id) && po.Order.deleted_at.Equals(null))
                             .Sum(po => po.quantity) ?? 0),
                         }).ToList();
                 

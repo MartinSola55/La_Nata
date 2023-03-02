@@ -451,6 +451,7 @@ namespace La_Ñata.Controllers
                                         prod.id_order = id_order;
                                         db.ProductOrder.Add(prod);
                                         db.SaveChanges();
+                                        break;
                                     }
                                 }
                                 // Add new product

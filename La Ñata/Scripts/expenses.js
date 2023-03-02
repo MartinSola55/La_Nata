@@ -49,7 +49,6 @@ function createTable(data) {
 moment.locale('es');
 $(function () {
     $("#datepicker").daterangepicker({
-        "autoApply": true,
         "locale": {
             "applyLabel": "Aplicar",
             "cancelLabel": "Cancelar",
@@ -59,7 +58,7 @@ $(function () {
         singleDatePicker: false,
         opens: 'right',
         autoUpdateInput: true,
-        autoApply: true
+        autoApply: false
     })
 });
 
