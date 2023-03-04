@@ -228,7 +228,9 @@ namespace La_Ñata.Controllers
                             p.stock,
                             p.price,
                             p.break_price,
-                        }).ToList();
+                        })
+                        .OrderBy(p => p.description)
+                        .ToList();
 
                 return Json(products, JsonRequestBehavior.AllowGet);
             }
@@ -259,7 +261,9 @@ namespace La_Ñata.Controllers
                             stock = p.stock - (p.ProductOrder
                             .Where(po => DbFunctions.TruncateTime(po.Order.date).ToString().Contains(date_formatted) && po.id_product.Equals(p.id) && po.Order.deleted_at.Equals(null))
                             .Sum(po => po.quantity) ?? 0),
-                        }).ToList();
+                        })
+                        .OrderBy(p => p.description)
+                        .ToList();
                 
                 return Json(products, JsonRequestBehavior.AllowGet);
             }

@@ -234,7 +234,9 @@ namespace La_Ñata.Controllers
                         o.date,
                         o.shipment_price,
                         o.observation,
-                    }).ToList();
+                    })
+                    .OrderByDescending(o => o.date)
+                    .ToList();
                 return Json(orders, JsonRequestBehavior.AllowGet);
             }
             catch (Exception)

@@ -171,7 +171,7 @@ namespace La_Ñata.Controllers
                         e.description,
                         e.price,
                     })
-                    .OrderByDescending(e => e.date).ThenByDescending(e => e.price)
+                    .OrderByDescending(e => DbFunctions.TruncateTime(e.date)).ThenByDescending(e => e.price)
                     .ToList();
                 return Json(expenses, JsonRequestBehavior.AllowGet);
             }
@@ -228,12 +228,12 @@ namespace La_Ñata.Controllers
 
                 List<Expense> expenses = db.Expense
                     .Where(e => e.date >= date_from && e.date <= date_to && e.deleted_at.Equals(null))
-                    .OrderByDescending(e => e.date).ThenByDescending(e => e.price)
+                    .OrderByDescending(e => DbFunctions.TruncateTime(e.date)).ThenByDescending(e => e.price)
                     .ToList();
 
                 List<Order> orders = db.Order
                     .Where(o => o.date >= date_from && o.date <= date_to && o.deleted_at.Equals(null))
-                    .OrderByDescending(o => o.date).ThenByDescending(o => o.ProductOrder.Sum(po => (po.unit_price * po.quantity.Value)) + (o.shipment_price ?? 0))
+                    .OrderByDescending(o => DbFunctions.TruncateTime(o.date)).ThenByDescending(o => o.ProductOrder.Sum(po => (po.unit_price * po.quantity.Value)) + (o.shipment_price ?? 0))
                     .ToList();
 
                 Tuple<List<Expense>, List<Order>, List<DateTime>> model = new Tuple<List<Expense>, List<Order>, List<DateTime>>(expenses, orders, dates);
