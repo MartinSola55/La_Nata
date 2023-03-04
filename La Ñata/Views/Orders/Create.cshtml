@@ -34,7 +34,7 @@
 }
 
 <div class="container d-flex justify-content-center p-5 mt-5" id="formContainer">
-    @using (Html.BeginForm("AddProducts", "Orders", FormMethod.Post, new { @class = "mx-2 " }))
+    @using (Html.BeginForm("SetOrderData", "Orders", FormMethod.Post, new { @class = "mx-2 " }))
     {
         @Html.AntiForgeryToken()
 

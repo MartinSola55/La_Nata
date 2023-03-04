@@ -105,7 +105,23 @@ namespace La_Ñata.Controllers
         // GET: Orders/Create
         public ActionResult Create()
         {
-            return View(new Order());
+            try
+            {
+                if (TempData.Count == 1)
+                {
+                    ViewBag.Message = TempData["Message"].ToString();
+                }
+                else if (TempData.Count == 2)
+                {
+                    ViewBag.Message = TempData["Message"].ToString();
+                    ViewBag.Error = TempData["Error"];
+                }
+                return View(new Order());
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index");
+            }
         }
 
         // GET: Orders/Edit/5
@@ -141,12 +157,12 @@ namespace La_Ñata.Controllers
             int prod_anterior = -1;
             foreach (ProductOrder item in order.ProductOrder)
             {
-                // Restar stock del mismo producto sin volver a revisar las ordenes del mismo día
+                // Restar stock del mismo producto sin volver a revisar los pedidos del mismo día
                 if (prod_anterior == item.id_product)
                 {
                     item.Product.stock -= item.quantity.Value;
                 }
-                // Si no se repite el producto en la orden
+                // Si no se repite el producto en el pedido
                 else
                 {
                     prod_anterior = item.id_product;
@@ -155,17 +171,17 @@ namespace La_Ñata.Controllers
                     {
                         foreach (ProductOrder prod_order in ord.ProductOrder)
                         {
-                            // Si el producto se repite en otra orden
+                            // Si el producto se repite en otro pedido
                             if (prod_order.id_product == item.id_product)
                             {
                                 quant_prod_orders += prod_order.quantity.Value;
                             }
                         }
                     }
-                    // Resta la cantidad en otras ordenes
+                    // Resta la cantidad en otros pedidos
                     item.Product.stock -= quant_prod_orders;
 
-                    //Resta la cantidad de la orden actual
+                    //Resta la cantidad del pedido actual
                     item.Product.stock -= item.quantity.Value;
                 }
             }
@@ -182,11 +198,11 @@ namespace La_Ñata.Controllers
                 Order order = db.Order.Where(o => o.id.Equals(id) && o.deleted_at.Equals(null)).First();
                 order.deleted_at = DateTime.UtcNow.AddHours(-3);
                 db.SaveChanges();
-                TempData["Message"] = "La orden se ha eliminado correctamente";
+                TempData["Message"] = "El pedido se ha eliminado correctamente";
             }
             catch (Exception)
             {
-                TempData["Message"] = "Ha ocurrido un error. La orden no pudo ser eliminada";
+                TempData["Message"] = "Ha ocurrido un error. El pedido no pudo ser eliminado";
                 TempData["Error"] = 2;
             }
             return RedirectToAction("Index");
@@ -227,47 +243,86 @@ namespace La_Ñata.Controllers
             }
         }
 
-        // POST: Add products to order
+        // POST: Set Order data
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AddProducts(Order order)
+        public ActionResult SetOrderData(Order order)
         {
-            if (ModelState.IsValid)
+            try
             {
-                order.client_name = ToTitleCase(order.client_name);
-                order.event_adress = ToUpperFirst(order.event_adress);
-                order.phone = order.phone ==  null ? null : ToNumber(order.phone);
+                if (ModelState.IsValid)
+                {
+                    order.client_name = ToTitleCase(order.client_name);
+                    order.event_adress = ToUpperFirst(order.event_adress);
+                    order.phone = order.phone == null ? null : ToNumber(order.phone);
+                    Session["Order"] = order;
+                    return RedirectToAction("AddProducts");
+                }
+                TempData["Message"] = "Alguno de los campos ingresados no es válido";
+                TempData["Message"] = 1;
+                return RedirectToAction("Create", order);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error al intentar crear el pedido";
+                TempData["Message"] = 2;
+                return RedirectToAction("Index");
+            }
+        }
+
+        // GET: View to see products in the order
+        [HttpGet]
+        public ActionResult AddProducts()
+        {
+            if (Session["Order"] != null)
+            {
+                if (TempData.Count == 1)
+                {
+                    ViewBag.Message = TempData["Message"].ToString();
+                }
+                else if (TempData.Count == 2)
+                {
+                    ViewBag.Message = TempData["Message"].ToString();
+                    ViewBag.Error = TempData["Error"];
+                }
+                Order order = Session["Order"] as Order;
                 return View(new ProductOrder { Order = order });
             }
+            TempData["Message"] = "Debes volver a ingresar los datos del pedido";
+            TempData["Error"] = 1;
             return RedirectToAction("Create");
         }
 
 
         // GET: Add products to order
         [HttpGet]
-        public void AddToOrder(int? id_prod, int? quant, int real_stock)
+        public ActionResult AddToOrder(int? id_product, int? quantity, int stock)
         {
             try
             {
+                Order order = Session["Order"] as Order;
                 List<ProductOrder> products = new List<ProductOrder>();
-                if (id_prod != null && quant != null)
+                if (id_product != null && quantity != null)
                 {
                     if (Session["Products"] != null)
                     {
                         products = Session["Products"] as List<ProductOrder>;
                     }
-                    if (quant.Value > 0)
+                    if (quantity.Value > 0)
                     {
                         ProductOrder prod = new ProductOrder();
                         prod.Product = db.Product
-                            .Where(p => p.id.Equals(id_prod.Value))
+                            .Where(p => p.id.Equals(id_product.Value))
                             .First();
 
                         if (products.Count == 0)
                         {
-                            prod.quantity = quant.Value;
+                            prod.quantity = quantity.Value;
                             prod.unit_price = prod.Product.price;
                             products.Add(prod);
+                            TempData["Message"] = "El producto se agregó correctamente";
+                            Session["Products"] = products;
+                            return RedirectToAction("AddProducts");
                         }
                         else
                         {
@@ -279,42 +334,56 @@ namespace La_Ñata.Controllers
                                 if (products[index].Product.id == prod.Product.id)
                                 {
                                     // Validate not to exceed stock
-                                    if (products[index].quantity + quant.Value <= real_stock)
+                                    if (products[index].quantity + quantity.Value <= stock)
                                     {
-                                        products[index].quantity += quant.Value;
-                                        break;
+                                        products[index].quantity += quantity.Value;
+                                        TempData["Message"] = "El producto se sumó correctamente";
+                                        Session["Products"] = products;
+                                        return RedirectToAction("AddProducts");
                                     }
+                                    TempData["Message"] = "No cuentas con suficiente stock";
+                                    TempData["Error"] = 1;
+                                    return RedirectToAction("AddProducts");
                                 }
                                 // Add new product
                                 else if (index == products.Count - 1)
                                 {
-                                    prod.quantity = quant.Value;
+                                    prod.quantity = quantity.Value;
                                     prod.unit_price = prod.Product.price;
                                     products.Add(prod);
+                                    TempData["Message"] = "El producto se agregó correctamente";
+                                    Session["Products"] = products;
+                                    return RedirectToAction("AddProducts");
                                 }
                             }
                         }
-                        Session["Products"] = products;
                     }
+                    TempData["Message"] = "Por favor, ingresa una cantidad mayor a cero";
+                    TempData["Error"] = 1;
+                    return RedirectToAction("AddProducts");
                 }
+                TempData["Message"] = "No has ingresado correctamente el producto o la cantidad";
+                TempData["Error"] = 1;
+                return RedirectToAction("AddProducts");
             }
             catch (Exception)
             {
-                throw;
+                TempData["Message"] = "Ha ocurrido un error inesperado. Por favor, vuelve a agregar el producto";
+                TempData["Error"] = 2;
+                return RedirectToAction("AddProducts");
             }
-            return;
         }
 
         // GET: Remove products from order
         [HttpGet]
-        public void RemoveProduct(int? id_prod)
+        public ActionResult RemoveProduct(int? id_product)
         {
             try
             {
-                if (id_prod != null && Session["Products"] != null)
+                if (id_product != null && Session["Products"] != null)
                 {
                     List<ProductOrder> products = Session["Products"] as List<ProductOrder>;
-                    ProductOrder prod_s = products.Where(p => p.Product.id.Equals(id_prod.Value)).FirstOrDefault();
+                    ProductOrder prod_s = products.Where(p => p.Product.id.Equals(id_product.Value)).FirstOrDefault();
                     products.Remove(prod_s);
                     if (products.Count > 0)
                     {
@@ -324,13 +393,19 @@ namespace La_Ñata.Controllers
                     {
                         Session["Products"] = null;
                     }
+                    TempData["Message"] = "El producto se eliminó correctamente";
+                    return RedirectToAction("AddProducts");
                 }
+                TempData["Message"] = "Ocurrió un problema con el producto seleccionado";
+                TempData["Error"] = 1;
+                return RedirectToAction("AddProducts");
             }
             catch (Exception)
             {
-                throw;
+                TempData["Message"] = "Ha ocurrido un error inesperado. Por favor, vuelve a agregar el producto";
+                TempData["Error"] = 2;
+                return RedirectToAction("AddProducts");
             }
-            return;
         }
 
         // POST: Create order
@@ -369,21 +444,26 @@ namespace La_Ñata.Controllers
                             transaccion.Complete();
                         }
                         Session["Products"] = null;
+                        Session["Order"] = null;
                         TempData["Message"] = "El pedido se ha creado exitosamente";
+                        return RedirectToAction("Index");
                     }
-                }
-                else
-                {
-                    TempData["Message"] = "El pedido no ha podido ser creado";
+                    TempData["Message"] = "No hay ningun producto cargado en el pedido";
                     TempData["Error"] = 1;
+                    return View(order);
                 }
+                TempData["Message"] = "Por favor, ingrese una observación válida";
+                TempData["Error"] = 1;
+                return RedirectToAction("AddProducts");
             }
             catch (Exception)
             {
+                Session["Products"] = null;
+                Session["Order"] = null;
                 TempData["Message"] = "Ha ocurrido un error. El pedido no pudo ser creado";
-                TempData["Error"] = "2";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
             }
-            return RedirectToAction("Index");
         }
 
         // POST: Add products to existing order
@@ -443,7 +523,8 @@ namespace La_Ñata.Controllers
                                             TempData["Error"] = 1;
                                             return RedirectToAction("Edit", new { id = id_order });
                                         }
-                                    } else
+                                    }
+                                    else
                                     {
                                         prod.quantity = quantity.Value;
                                         prod.unit_price = prod.Product.price;
@@ -472,7 +553,7 @@ namespace La_Ñata.Controllers
                                 }
                             }
                         }
-                        TempData["Message"] = "El producto se agregó correctamente a la orden";
+                        TempData["Message"] = "El producto se agregó correctamente al pedido";
                         return RedirectToAction("Edit", new { id = id_order });
                     }
                     TempData["Message"] = "Seleccione una cantidad mayor a 0";
@@ -485,12 +566,12 @@ namespace La_Ñata.Controllers
             }
             catch (DbUpdateException)
             {
-                TempData["Message"] = "Ya existe un producto con el mismo precio en la orden";
+                TempData["Message"] = "Ya existe un producto con el mismo precio en el pedido";
                 TempData["Error"] = 1;
             }
             catch (Exception)
             {
-                TempData["Message"] = "Ha ocurrido un error. El producto no se ha podido agregar correctamente a la orden";
+                TempData["Message"] = "Ha ocurrido un error. El producto no se ha podido agregar correctamente al pedido";
                 TempData["Error"] = 2;
             }
             return RedirectToAction("Edit", new { id = id_order });
@@ -522,7 +603,7 @@ namespace La_Ñata.Controllers
                         {
                             db.ProductOrder.Remove(product_order);
                             db.SaveChanges();
-                            TempData["Message"] = "El producto se eliminó correctamente a la orden";
+                            TempData["Message"] = "El producto se eliminó correctamente del pedido ";
                             return RedirectToAction("Edit", new { id = id_order });
                         }
                         // Substract quantity
@@ -534,7 +615,7 @@ namespace La_Ñata.Controllers
                     }
                     else
                     {
-                        TempData["Message"] = "Seleccione una cantidad mayor a 0";
+                        TempData["Message"] = "Seleccione una cantidad mayor a cero";
                         TempData["Error"] = 1;
                         return RedirectToAction("Edit", new { id = id_order });
                     }
@@ -545,11 +626,11 @@ namespace La_Ñata.Controllers
                     TempData["Error"] = 1;
                     return RedirectToAction("Edit", new { id = id_order });
                 }
-                TempData["Message"] = "El producto se restó correctamente de la orden";
+                TempData["Message"] = "El producto se restó correctamente del pedido";
             }
             catch (Exception)
             {
-                TempData["Message"] = "Ha ocurrido un error. El producto no se ha podido restar correctamente de la orden";
+                TempData["Message"] = "Ha ocurrido un error. El producto no se ha podido restar correctamente del pedido";
                 TempData["Error"] = 2;
             }
             return RedirectToAction("Edit", new { id = id_order });

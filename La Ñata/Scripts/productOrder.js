@@ -57,11 +57,8 @@ $("#btnSendForm").on("click", function (e) {
     e.preventDefault();
     let quant = parseInt($("#quantity").val());
     let stock = parseInt($("#stock").val());
-    let id_product = $("#id_product").val();
     if (quant <= stock && quant > 0) {
-        $.get("../../Orders/AddToOrder/?id_prod=" + id_product + "&quant=" + quant + "&real_stock=" + stock, function () {
-            location.reload();
-        })
+        $("#formAddToOrder").submit();
     } else if (quant <= 0) {
         alert("Ingrese una cantidad mayor a 0");
     } else {

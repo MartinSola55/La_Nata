@@ -7,6 +7,7 @@
 
 <link href="~/Content/table.css" rel="stylesheet" />
 <link href="~/Content/number_input.css" rel="stylesheet" />
+<link href="~/Content/notification.css" rel="stylesheet" />
 
 <div class="d-flex align-items-end">
     <a class="btn btn-dark" href="../../Orders/Create"><i class="bi bi-arrow-left"></i></a>
@@ -16,37 +17,53 @@
 </div>
 <hr class="pb-3" />
 
-
-
-@Html.Hidden("id_product")
-@Html.Hidden("stock")
-<!-- Modal -->
-<div class="modal modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5">Agregar al pedido</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+@{ if (ViewBag.Message != null)
+    {
+        <div class="py-3 mb-5 @(ViewBag.Error == 1 ? "containerError1" : "")@(ViewBag.Error == 2 ? "containerError2" : "")@(ViewBag.Error == null ? "onlyMessage" : "")" id="notificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtNotification">@ViewBag.Message</div>
+                <button id="btnCloseNotification" type="button" aria-label="Cerrar">
+                    <svg aria-hidden="true" height="16" viewBox="0 0 16 16" version="1.1" width="16" data-view-component="true" class="octicon octicon-x">
+                        <path id="closeSVG" fill="rgb(0,75,180)" class="@(ViewBag.Error == 1 ? "error1" : "") @(ViewBag.Error == 2 ? "error2" : "") @(ViewBag.Error == null ? "onlyMessage" : "")" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path>
+                    </svg>
+                </button>
             </div>
-            <div class="modal-body d-flex flex-column">
-                <div class="d-flex flex-column">
-                    <label class="pb-3 text-center" id="currentStock"></label>
-                    <div class="d-flex flex-row justify-content-center align-items-center">
-                        <div class='d-flex flex-row justify-content-center'>
-                            <div class='value-button' id='decrease_stock' onclick='decreaseValue()' value='Decrease Value'>-</div>
-                            @Html.TextBoxFor(model => model.quantity, null, new { @type = "number", @id = "quantity", @class = "number" })
-                            <div class='value-button' id='increase_stock' onclick='increaseValue()' value='Increase Value'>+</div>
-                        </div>
-                    </div>
-                    @Html.ValidationMessageFor(model => model.quantity, null, new { @class = "text-center text-danger mb-4" })
+        </div>
+    }
+}
+
+@using (Html.BeginForm("AddToOrder", "Orders", FormMethod.Get, new { @id = "formAddToOrder" }))
+{
+    @Html.Hidden("id_product")
+    @Html.Hidden("stock")
+    <!-- Modal -->
+    <div class="modal modal-lg" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Agregar al pedido</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
-            </div>
-            <div class="modal-footer d-flex justify-content-start ps-3">
-                <button id="btnSendForm" type="submit" class="btn" style="background-color: yellowgreen">Agregar</button>
+                <div class="modal-body d-flex flex-column">
+                    <div class="d-flex flex-column">
+                        <label class="pb-3 text-center" id="currentStock"></label>
+                        <div class="d-flex flex-row justify-content-center align-items-center">
+                            <div class='d-flex flex-row justify-content-center'>
+                                <div class='value-button' id='decrease_stock' onclick='decreaseValue()' value='Decrease Value'>-</div>
+                                @Html.TextBoxFor(model => model.quantity, null, new { @type = "number", @id = "quantity", @class = "number" })
+                                <div class='value-button' id='increase_stock' onclick='increaseValue()' value='Increase Value'>+</div>
+                            </div>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.quantity, null, new { @class = "text-center text-danger mb-4" })
+                    </div>
+                </div>
+                <div class="modal-footer d-flex justify-content-start ps-3">
+                    <button id="btnSendForm" type="submit" class="btn" style="background-color: yellowgreen">Agregar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+}
 
 <div class="mx-xl-4 mb-5 d-flex flex-xl-row flex-column">
     <div class="col-xl-9 col-11 me-xl-3 mb-4 mx-auto">
@@ -99,6 +116,7 @@
                     <div class="col-xl-3">
                         <label class="mt-2">Observaciones</label>
                         @Html.TextArea("observation", Model.Order.observation, new { @class = "form-control py-2", @rows = "4", @cols = "40" })
+                        @Html.ValidationMessageFor(model => model.Order.observation, "", new { @class = "text-danger mb-4 mt-3" })
                     </div>
                 </div>
             </div>
@@ -165,7 +183,7 @@
                                     <td class="cell100 text-center" style="width: 30%">
                                         @using (Html.BeginForm("RemoveProduct", "Orders", FormMethod.Get))
                                         {
-                                            @Html.Hidden("id_prod", item.Product.id)
+                                            @Html.Hidden("id_product", item.Product.id)
                                             <button class="btn" style="background-color: #ff5969; color: white; padding: 0 0.3rem" type="submit"><i class='bi bi-x-lg'></i></button>
                                         }
                                     </td>
@@ -197,3 +215,4 @@
 <script src="~/Scripts/jquery.validate.min.js"></script>
 <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
 <script src="~/Scripts/productOrder.js"></script>
+<script src="~/Scripts/notification.js"></script>

@@ -175,7 +175,7 @@
 .daterangepicker td.available:hover, .daterangepicker th.available:hover {
   background-color: #e38e00;
   border-color: transparent;
-  color: inherit;
+  color: white;
 }
 
 .daterangepicker td.week, .daterangepicker th.week {

@@ -19,6 +19,8 @@ namespace La_Ñata.Controllers
         public ActionResult Logout()
         {
             Session["User"] = null;
+            Session["Products"] = null;
+            Session["Order"] = null;
             return RedirectToAction("Index", "Login");
         }
         public ActionResult Validate(string email, string password)
