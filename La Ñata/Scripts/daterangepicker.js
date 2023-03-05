@@ -6,6 +6,8 @@
 * @website: http://www.daterangepicker.com/
 */
 // Following the UMD template https://github.com/umdjs/umd/blob/master/templates/returnExportsGlobal.js
+
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Make globaly available as well
@@ -781,6 +783,12 @@
                 for (var col = 0; col < 7; col++) {
 
                     var classes = [];
+
+                    for (let ind = 0; ind < eventDates.length; ind++) {
+                        //highlight events date
+                        if (calendar[row][col]._d.getDate() == eventDates[ind].getDate() && calendar[row][col]._d.getMonth() == eventDates[ind].getMonth() && calendar[row][col]._d.getFullYear() == eventDates[ind].getFullYear())
+                            classes.push('event-active');
+                    }
 
                     //highlight today's date
                     if (calendar[row][col].isSame(new Date(), "day"))

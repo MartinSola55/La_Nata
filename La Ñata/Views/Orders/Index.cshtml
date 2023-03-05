@@ -74,6 +74,26 @@
 </div>
 
 <script src="~/Scripts/moment-with-locales.js"></script>
+
+<script>
+    let eventDates = [];
+
+    function parseDate(date) {
+        return moment(date);
+    }
+
+    $.get("../../Orders/OrdersDates", function (data) {
+        for (let i = 0; i < data.length; i++) {
+            let date = new Date(parseDate(data[i].date));
+            let dd = parseInt(date.getDate());
+            let mm = parseInt(date.getMonth());
+            let yyyy = parseInt(date.getFullYear());
+
+            eventDates.push(new Date(yyyy, mm, dd));
+        }
+    })
+</script>
+
 <script src="~/Scripts/daterangepicker.js"></script>
 <script src="~/Scripts/orders.js"></script>
 <script src="~/Scripts/notification.js"></script>

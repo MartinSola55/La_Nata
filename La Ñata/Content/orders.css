@@ -1,1 +1,5 @@
-﻿
+﻿.event-active::after {
+    content: ' *';
+    color: crimson;
+    font-weight: bold;
+}

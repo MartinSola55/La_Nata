@@ -245,6 +245,28 @@ namespace La_Ñata.Controllers
             }
         }
 
+        // GET: Orders dates
+        public JsonResult OrdersDates()
+        {
+            try
+            {
+                DateTime today = DateTime.UtcNow.AddHours(-3);
+                var orders = db.Order
+                    .Where(o => o.date.Year >= today.Year && o.date.Year <= (today.Year + 1) && o.deleted_at.Equals(null))
+                    .Select(o => new
+                    {
+                        o.date
+                    })
+                    .OrderBy(o => o.date)
+                    .ToList();
+                return Json(orders, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception)
+            {
+                return Json(null, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         // POST: Set Order data
         [HttpPost]
         [ValidateAntiForgeryToken]
