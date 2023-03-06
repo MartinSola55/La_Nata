@@ -39,7 +39,6 @@
                         <td style="border: none"><img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 300px; max-height: 100px;"></td>
                         <td class="w-100 text-end align-self-end" style="border: none">
                             <p class="align-self-end mb-0">Detalle de gastos e ingresos entre <b>@Model.Item3.First().ToString("dd/MM/yyyy")</b> y <b>@Model.Item3.Last().ToString("dd/MM/yyyy")</b><br /></p>
-                            <b class="align-self-end mb-0">Ganancias: $@profit.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b>
                         </td>
                     </tr>
                 </tbody>
@@ -61,7 +60,7 @@
                     @foreach (La_Ñata.Models.Expense expense in Model.Item1)
                     {
                         i++;
-                        <tr  style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
+                        <tr style="@(i % 2 == 0 ? "" : "background-color: #ecedee")">
                             <td>@expense.description</td>
                             <td class="text-center">@expense.date.ToString("dd/MM/yyyy")</td>
                             <td class="text-end">$@expense.price.ToString("N", new System.Globalization.CultureInfo("is-IS"))</td>
@@ -127,7 +126,22 @@
                 </tbody>
             </table>
 
+            @* Ganancias *@
+            <h1 class="text-start mt-5">GANANCIAS</h1>
+            <hr class="mb-3" />
 
+            <table class="table table-light table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <td>
+                            <b>Total: $@profit.ToString("N", new System.Globalization.CultureInfo("is-IS"))</b>
+                        </td>
+                    </tr>
+                </thead>
+            </table>
+
+
+            @* Footer *@
             <table class="d-flex mb-3 mt-5 mx-auto justify-content-center" style="border: none">
                 <tbody style="border: none">
                     <tr style="border: none">

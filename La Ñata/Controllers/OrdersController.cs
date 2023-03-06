@@ -279,6 +279,7 @@ namespace La_Ñata.Controllers
                     order.client_name = ToTitleCase(order.client_name);
                     order.event_adress = ToUpperFirst(order.event_adress);
                     order.phone = order.phone == null ? null : ToNumber(order.phone);
+                    order.date = order.date.AddHours(12);
                     Session["Order"] = order;
                     return RedirectToAction("AddProducts");
                 }
