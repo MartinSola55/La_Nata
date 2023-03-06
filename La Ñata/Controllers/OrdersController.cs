@@ -675,6 +675,29 @@ namespace La_Ñata.Controllers
             return View(order);
         }
 
+        // GET: Budget report for clients
+        [HttpGet]
+        public ActionResult ReportBudget()
+        {
+            try
+            {
+                if (Session["Order"] != null && Session["Products"] != null)
+                {
+                    Order order = Session["Order"] as Order;
+                    List<ProductOrder> products = Session["Products"] as List<ProductOrder>;
+                    order.ProductOrder = products;
+
+                    return View("ReportWithPrice", order);
+                }
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado. Por favor, vuelve a generar el presupuesto";
+                TempData["Error"] = 2;
+            }
+            return RedirectToAction("AddProducts");
+        }
+
         // GET: Print report
         [HttpGet]
         public ActionResult Print(int id_order, bool price)

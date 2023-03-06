@@ -36,7 +36,7 @@ namespace La_Ñata.Controllers
                     ViewBag.Message = TempData["Message"].ToString();
                     ViewBag.Error = TempData["Error"];
                 }
-                List<Product> products = db.Product.Where(p => p.deleted_at.Equals(null)).ToList();
+                List<Product> products = db.Product.Where(p => p.deleted_at.Equals(null)).OrderBy(p => p.description).ToList();
                 return View(products);
             }
             catch (Exception)

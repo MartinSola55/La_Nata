@@ -199,7 +199,11 @@
                                     @Html.HiddenFor(model => model.Order.date)
                                     @Html.HiddenFor(model => model.Order.shipment_price)
                                     @Html.HiddenFor(model => model.Order.observation)
-                                    <td class="cell100 d-flex justify-content-end pe-3">
+                                    <td class="cell100 d-flex justify-content-between px-3">
+                                        <a class="btn" target="_blank" href="../../Orders/ReportBudget" style="background-color: #e38e00; color: white">
+                                            Presupuesto
+                                            <i class="bi bi-printer" style="color: white"></i>
+                                        </a>
                                         <button id="btnConfirmOrder" class="btn" style="background-color: lightgreen; color: rgb(80, 80, 80); text-shadow: 0px 0px 30px #000; " type="submit">Confirmar</button>
                                     </td>
                                 }
