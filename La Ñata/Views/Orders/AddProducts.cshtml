@@ -70,33 +70,33 @@
 
         @* Datos del pedido *@
         <div class="sombra p-4 mb-5" style="border-radius: 20px">
-            <div id="searchContainer" class="d-flex flex-lg-column flex-row justify-content-between">
+            <div id="searchContainer" class="d-flex flex-lg-column flex-md-row flex-column justify-content-md-between justify-content-center">
                 <div class="d-flex flex-lg-row flex-column me-2 me-md-0">
                     <div class="col-xl-3 pe-lg-3">
                         <label class="mt-2">Cliente</label>
-                        @Html.TextBox("client_name", Model.Order.client_name, new { @class = "form-control py-2", @disabled = "disabled" })
+                        @Html.TextBox("client_name", Model.Order.client_name, new { @class = "form-control py-2 mw-100", @disabled = "disabled" })
                     </div>
 
                     <div class="col-xl-3 pe-lg-3">
                         <label class="mt-2">Teléfono</label>
                         @if (Model.Order.phone == null || Model.Order.phone == string.Empty)
                         {
-                            @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center", @disabled = "disabled" })
+                            @Html.TextBox("phone", "-", new { @class = "form-control py-2 text-center mw-100", @disabled = "disabled" })
                         }
                         else
                         {
-                            @Html.TextBox("phone", Model.Order.phone, new { @class = "form-control py-2", @disabled = "disabled" })
+                            @Html.TextBox("phone", Model.Order.phone, new { @class = "form-control py-2 mw-100", @disabled = "disabled" })
                         }
                     </div>
 
                     <div class="col-xl-3 pe-lg-3">
                         <label class="mt-2">Dirección</label>
-                        @Html.TextBox("event_adress", Model.Order.event_adress, new { @class = "form-control py-2", @disabled = "disabled" })
+                        @Html.TextBox("event_adress", Model.Order.event_adress, new { @class = "form-control py-2 mw-100", @disabled = "disabled" })
                     </div>
 
                     <div class="col-xl-3">
                         <label class="mt-2">Fecha</label>
-                        @Html.TextBox("date", Model.Order.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2", @disabled = "disabled", @id = "datepicker" })
+                        @Html.TextBox("date", Model.Order.date.ToString("dd/MM/yyyy"), new { @class = "form-control py-2 mw-100", @disabled = "disabled", @id = "datepicker" })
                     </div>
                 </div>
 
@@ -105,17 +105,17 @@
                         <label class="mt-2">Flete</label>
                         @if (Model.Order.shipment_price == null)
                         {
-                            @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center", @disabled = "disabled" })
+                            @Html.TextBox("shipment_price", "-", new { @class = "form-control py-2 text-center mw-100", @disabled = "disabled" })
                         }
                         else
                         {
-                            @Html.TextBox("shipment_price", Model.Order.shipment_price, new { @class = "form-control py-2", @disabled = "disabled" })
+                            @Html.TextBox("shipment_price", Model.Order.shipment_price, new { @class = "form-control py-2 mw-100", @disabled = "disabled" })
                         }
                     </div>
 
                     <div class="col-xl-3">
                         <label class="mt-2">Observaciones</label>
-                        @Html.TextArea("observation", Model.Order.observation, new { @class = "form-control py-2", @rows = "4", @cols = "40" })
+                        @Html.TextArea("observation", Model.Order.observation, new { @class = "form-control py-2 mw-100", @rows = "4", @cols = "40" })
                         @Html.ValidationMessageFor(model => model.Order.observation, "", new { @class = "text-danger mb-4 mt-3" })
                     </div>
                 </div>
