@@ -1,6 +1,7 @@
 ﻿
 @{
     ViewBag.Title = "Inicio";
+    DateTime today = DateTime.UtcNow.AddHours(-3);
 }
 <link href="~/Content/cards.css" rel="stylesheet" type="text/css" />
 <link href="~/Content/notification.css" rel="stylesheet" />
@@ -8,6 +9,17 @@
 
 <h1 class="text-center">INICIO</h1>
 <hr class="pb-3" />
+
+@{
+    if (today.Day == 1)
+    {
+        <div class="py-3 mb-5 onlyMessage" id="paymentNotificationContainer">
+            <div class="px-2 d-flex flex-row justify-content-between align-items-center">
+                <div id="txtPaymentNotification">RECORDATORIO: Hoy es 1 de @today.ToString("MMMM"), debes transferir @(ViewBag.AmountToPay != null ? "$" + ViewBag.AmountToPay : "el valor de $10 USD blue") a Martín. CBU: 1430001713024710700012</div>
+            </div>
+        </div>
+    }
+}
 
 @{ if (ViewBag.Message != null)
     {
@@ -48,3 +60,18 @@
 </div>
 
 <script src="~/Scripts/notification.js"></script>
+
+<style>
+    #paymentNotificationContainer {
+        border-style: solid;
+    }
+
+    #btnClosePaymentNotification {
+        appearance: none;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        float: right;
+        text-align: center;
+    }
+</style>
