@@ -27,14 +27,18 @@
                     <p class="my-3" style="font-family: 'Roboto', sans-serif; font-style: italic; font-weight: 700">Alquiler de sillas, mesas,<br />vajillas, mantelería y mobiliario</p>
                     <p class="mb-0" style="font-family: 'Roboto', sans-serif; font-style:normal">
                         <b>Cliente:</b> @Model.client_name <br />
+                        <b>Teléfono:</b> @Model.phone<br />
                         <b>Fecha:</b> @Model.date.ToString("dd/MM/yyyy") <br />
                         <b>Lugar:</b> @Model.event_adress
                     </p>
                 </div>
                 <div>
-                    <div class="p-3 mb-2 text-center" style="background-color: #c9c9c9; border-radius: 3px; print-color-adjust: exact;">
-                        <p class="text-center mb-0 fw-bold fst-italic"> COMPROBANTE DE ENTREGA <br />PARA ALQUILER DE ENSERES</p>
-                    </div>
+                    <h3 class="fw-bold">Remito</h3>
+                    <p class="mb-2 text-start">
+                        <b>Nº:</b> @Model.id.ToString("D5").PadLeft(6, '0') <br />
+                        <b>Fechaº:</b> @DateTime.Now.ToString("dd/MM/yyyy") <br />
+                        <b>CUIT:</b> 20-32930332-3 <br />
+                    </p>
                     <p class="mb-0 text-center" style="font-family: 'Roboto', sans-serif; font-style:normal; font-weight: 700">
                         13 de Mayo - Tel: 03404-420949 / 15458425<br />
                         3013 - San Carlos Centro - Santa Fe
