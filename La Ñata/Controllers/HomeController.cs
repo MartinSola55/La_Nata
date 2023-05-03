@@ -23,7 +23,7 @@ namespace La_Ñata.Controllers
             try
             {
                 string payment = null;
-                if (DateTime.UtcNow.AddHours(-3).Day == 1)
+                if (DateTime.UtcNow.AddHours(-3).Day == 7)
                 {
                     API_Obj currency = Import();
                     if (currency.result == "success")
