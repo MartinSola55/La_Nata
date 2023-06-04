@@ -15,7 +15,7 @@ namespace La_Ñata.Controllers
     [Security]
     public class ProductsController : Controller
     {
-        private EFModel db = new EFModel();
+        private readonly EFModel db = new EFModel();
         private string ToUpperFirst(string title)
         {
             title = Regex.Replace(title, @"[^0-9a-zA-Z\u00C0-\u017F\s']", string.Empty);

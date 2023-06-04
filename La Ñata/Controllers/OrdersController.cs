@@ -21,7 +21,7 @@ namespace La_Ñata.Controllers
     [Security]
     public class OrdersController : Controller
     {
-        private EFModel db = new EFModel();
+        private readonly EFModel db = new EFModel();
         private string ToTitleCase(string title)
         {
             title = Regex.Replace(title, @"[^a-zA-Z\u00C0-\u017F\s']", string.Empty);

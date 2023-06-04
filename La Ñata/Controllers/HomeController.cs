@@ -16,7 +16,7 @@ namespace La_Ñata.Controllers
     [Security]
     public class HomeController : Controller
     {
-        private EFModel db = new EFModel();
+        private readonly EFModel db = new EFModel();
         // GET: Home
         public ActionResult Index()
         {
@@ -28,7 +28,7 @@ namespace La_Ñata.Controllers
                     API_Obj currency = Import();
                     if (currency.result == "success")
                     {
-                        payment = ((currency.conversion_rates.ARS * 10) * 2).ToString("N0", new System.Globalization.CultureInfo("is-IS"));
+                        payment = ((currency.conversion_rates.ARS * 15) * 2).ToString("N0", new System.Globalization.CultureInfo("is-IS"));
                     }
                 }
 
