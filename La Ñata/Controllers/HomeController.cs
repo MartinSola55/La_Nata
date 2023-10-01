@@ -25,11 +25,8 @@ namespace La_Ñata.Controllers
                 string payment = null;
                 if (DateTime.UtcNow.AddHours(-3).Day == 9)
                 {
-                    API_Obj currency = Import();
-                    if (currency.result == "success")
-                    {
-                        payment = ((currency.conversion_rates.ARS * 15) * 2).ToString("N0", new System.Globalization.CultureInfo("is-IS"));
-                    }
+                    API currency = Get();
+                    payment = (currency.blue.value_sell * 15).ToString("N0", new System.Globalization.CultureInfo("is-IS"));
                 }
 
                 int totalProducts = db.Product.Where(p => p.deleted_at.Equals(null)).Count();
@@ -44,6 +41,24 @@ namespace La_Ñata.Controllers
                 return View();
             }
         }
+        public static API Get()
+        {
+            try
+            {
+                string URLString = "https://api.bluelytics.com.ar/v2/latest";
+                using (var webClient = new WebClient())
+                {
+                    var json = webClient.DownloadString(URLString);
+                    API Test = JsonConvert.DeserializeObject<API>(json);
+                    return Test;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public static API_Obj Import()
         {
             try
@@ -78,6 +93,19 @@ namespace La_Ñata.Controllers
         public class ConversionRate
         {
             public double ARS { get; set; }
+        }
+
+        public class API
+        {
+            public USDRates oficial { get; set; }
+            public USDRates blue { get; set; }
+        }
+
+        public class USDRates
+        {
+            public double value_buy { get; set; }
+            public double value_avg { get; set; }
+            public double value_sell { get; set; }
         }
     }
 }
