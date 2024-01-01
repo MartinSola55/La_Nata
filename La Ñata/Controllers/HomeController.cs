@@ -26,7 +26,7 @@ namespace La_Ñata.Controllers
                 if (DateTime.UtcNow.AddHours(-3).Day == 9)
                 {
                     API currency = Get();
-                    payment = (currency.blue.value_sell * 15).ToString("N0", new System.Globalization.CultureInfo("is-IS"));
+                    payment = (currency.oficial.value_sell * 1.6 * 15).ToString("N0", new System.Globalization.CultureInfo("is-IS"));
                 }
 
                 int totalProducts = db.Product.Where(p => p.deleted_at.Equals(null)).Count();
