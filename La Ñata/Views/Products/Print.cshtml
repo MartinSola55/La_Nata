@@ -1,0 +1,81 @@
+﻿@model List<La_Ñata.Models.Product>
+@{
+    Layout = null;
+    int i = 0;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+
+@try
+{
+    <body class="container mt-3">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-body printableArea">
+                    <div class="d-flex flex-row justify-content-between align-items-start mb-4">
+                        <div>
+                            <img src="~/Content/Images/logo.png" alt="La Ñata" style="max-width: 400px; max-height: 100px;">
+                            <p class="mb-0 fw-bold fst-italic">Alquiler de sillas, mesas,<br />vajillas, mantelería y mobiliario</p>
+                        </div>
+
+                        <address class="align-self-end mb-0">
+                            <p class="text-muted m-l-30 text-end mb-0">
+                                <b>Fecha:</b> @DateTime.UtcNow.AddHours(-3).ToString("dd/MM/yyyy") <br />
+                                <b>CUIT:</b> 20-32930332-3 <br />
+                                13 de Mayo - Tel: 03404-420949 / 15458425<br />
+                                3013 - San Carlos Centro - Santa Fe
+                            </p>
+                        </address>
+                    </div>
+                    @*<hr class="mb-3">*@
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="text-start">LISTADO DE PRODUCTOS</h3>
+                            <hr class="mb-2 mt-0" />
+                            <div class="table-responsive m-t-40" style="clear: both;">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Precio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var product in Model)
+                                        {
+                                            i++;
+                                            <tr style="@(i % 2 == 0 ? "" : "background-color: #f7f7f7")">
+                                                <td>@product.description</td>
+                                                <td>$@product.price</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <table class="d-flex mb-3 mt-5 mx-auto justify-content-center" style="border: none">
+                            <tbody style="border: none">
+                                <tr style="border: none">
+                                    <td style="border: none">
+                                        <b class="mt-0 text-center">La Ñata - Todos los derechos reservados &#169</b>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+}
+catch (Exception)
+{
+    <p class="text-center">Ocurrio un error al intentar imprimir el reporte</p>
+}
+</html>

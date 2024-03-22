@@ -230,6 +230,7 @@
     <Content Include="Views\Expenses\Report.cshtml" />
     <Content Include="Views\Orders\ReportWithPrice.cshtml" />
     <Content Include="Views\Orders\ReportWithoutPrice.cshtml" />
+    <Content Include="Views\Products\Print.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

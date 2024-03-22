@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
-using System.Web;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using La_Ñata.Models;
 
@@ -47,10 +45,25 @@ namespace La_Ñata.Controllers
             }
         }
 
-        // GET: Products/Create
+        // GET: Products/Print
         public ActionResult Create()
         {
             return View(new Product());
+        }
+
+        public async Task<ActionResult> Print()
+        {
+            try
+            {
+                var products = await db.Product.Where(p => p.deleted_at.Equals(null)).OrderBy(p => p.description).ToListAsync();
+                return View(products);
+            }
+            catch (Exception)
+            {
+                TempData["Message"] = "Ha ocurrido un error inesperado";
+                TempData["Error"] = 2;
+                return RedirectToAction("Index");
+            }
         }
 
         // POST: Products/Create
